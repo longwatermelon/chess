@@ -1,6 +1,6 @@
 #pragma once
-#include "graphics.h"
-#include "piece.h"
+#include <common/include/graphics.h>
+#include <common/include/piece.h>
 #include <memory>
 #include <string>
 #include <vector>
