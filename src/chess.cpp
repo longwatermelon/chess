@@ -84,13 +84,16 @@ void chess::mainloop()
 
 		draw_board();
 
-		m_gfx->color({ 0, 255, 0 });
+		m_gfx->color({ 0, 255, 0, 80 });
 		for (auto& p : m_valid_moves)
 		{
+			SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_BLEND);
 			SDL_Rect rect{ p.x * 100 + 100, p.y * 100 + 100, 100, 100 };
 			SDL_RenderFillRect(m_gfx->rend(), &rect);
+
+			SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_NONE);
 		}
-		m_gfx->color({ 0, 0, 0 });
+		m_gfx->color({ 0, 0, 0, 255 });
 
 		for (auto& piece : m_pieces)
 		{

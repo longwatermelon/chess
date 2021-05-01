@@ -87,6 +87,62 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 
 		return valid;
 	}
+	case PieceType::KNIGHT:
+	{
+		for (int i = y() - 2; i <= y() + 2; ++i)
+		{
+			for (int j = x() - 2; j <= x() + 2; ++j)
+			{
+				if (abs((j - x()) * (i - y())) == 2)
+				{
+					const Piece* piece = occupied(j, i, pieces);
+
+					if (piece && piece->color() == m_color)
+						continue;
+
+					if (j >= 0 && j < 8 && i >= 0 && i < 8)
+						valid.emplace_back(SDL_Point{ j, i });
+				}
+			}
+		}
+
+		return valid;
+	}
+	case PieceType::KING:
+	{
+		for (int i = y() - 1; i <= y() + 1; ++i)
+		{
+			for (int j = x() - 1; j <= x() + 1; ++j)
+			{
+				const Piece* piece = occupied(j, i, pieces);
+
+				if (piece && piece->color() == m_color)
+					continue;
+
+				if (x() == j && y() == i)
+					continue;
+
+				if (j >= 0 && j <= 7 && i >= 0 && i <= 7)
+					valid.emplace_back(SDL_Point{ j, i });
+			}
+		}
+
+		return valid;
+	}
+	case PieceType::QUEEN:
+	{
+		scan(1, 1, valid, pieces);
+		scan(-1, -1, valid, pieces);
+		scan(1, -1, valid, pieces);
+		scan(-1, 1, valid, pieces);
+
+		scan(1, 0, valid, pieces);
+		scan(-1, 0, valid, pieces);
+		scan(0, 1, valid, pieces);
+		scan(0, -1, valid, pieces);
+
+		return valid;
+	}
 	}
 
 	return std::vector<SDL_Point>();
@@ -117,6 +173,9 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::v
 		{
 			int current_x = x() + xdir * abs(y() - i);
 			int current_y = i;
+
+			if (current_x < 0 || current_x > 7 || current_y < 0 || current_y > 7)
+				continue;
 
 			if (!occupied(current_x, current_y, pieces) && !blocked)
 			{

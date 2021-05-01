@@ -17,7 +17,7 @@ public:
 
 	void clear() const { SDL_RenderClear(m_rend); }
 	void display() const { SDL_RenderPresent(m_rend); }
-	void color(SDL_Color col) { SDL_SetRenderDrawColor(m_rend, col.r, col.g, col.b, 255); }
+	void color(SDL_Color col) { SDL_SetRenderDrawColor(m_rend, col.r, col.g, col.b, col.a); }
 
 private:
 	SDL_Window* m_window;
