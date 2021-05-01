@@ -12,8 +12,8 @@ public:
 
 	SDL_Texture* load_texture(const char* fp);
 
-	SDL_Renderer* rend() const { return m_rend; }
-	SDL_Window* window() const { return m_window; }
+	SDL_Renderer* rend() { return m_rend; }
+	SDL_Window* window() { return m_window; }
 
 	void clear() const { SDL_RenderClear(m_rend); }
 	void display() const { SDL_RenderPresent(m_rend); }

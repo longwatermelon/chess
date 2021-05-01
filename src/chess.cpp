@@ -4,15 +4,33 @@
 void chess::init()
 {
 	m_gfx = std::make_unique<Graphics>("chess");
-	
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
-	m_board += "........";
+
+	for (int i = 0; i < 8; ++i)
+	{
+		m_pieces.emplace_back(Piece(PieceType::PAWN, Color::BLACK, i, 1, m_gfx.get()));
+		m_pieces.emplace_back(Piece(PieceType::PAWN, Color::WHITE, i, 6, m_gfx.get()));
+	}
+
+	std::string format = "rkbKQbkr";
+
+	for (int i = 0; i < format.size(); ++i)
+	{
+		char c = format[i];
+
+		PieceType type = PieceType::PAWN;
+
+		switch (c)
+		{
+		case 'r': type = PieceType::ROOK; break;
+		case 'k': type = PieceType::KNIGHT; break;
+		case 'b': type = PieceType::BISHOP; break;
+		case 'K': type = PieceType::KING; break;
+		case 'Q': type = PieceType::QUEEN; break;
+		}
+
+		m_pieces.emplace_back(Piece(type, Color::BLACK, i, 0, m_gfx.get()));
+		m_pieces.emplace_back(Piece(type, Color::WHITE, i, 7, m_gfx.get()));
+	}
 }
 
 
@@ -35,7 +53,17 @@ void chess::mainloop()
 
 		draw_board();
 
+		for (auto& piece : m_pieces)
+		{
+			piece.render(m_gfx.get());
+		}
+
 		m_gfx->display();
+	}
+
+	for (auto& p : m_pieces)
+	{
+		SDL_DestroyTexture(p.tex());
 	}
 
 	m_gfx.reset();
@@ -63,7 +91,7 @@ void chess::draw_board()
 			if (draw_colored)
 				m_gfx->color({ 128, 0, 0 });
 			else
-				m_gfx->color({ 255, 255, 255 });
+				m_gfx->color({ 245, 222, 179 });
 
 			SDL_Rect rect{ x * 100 + 100, y * 100 + 100, 100, 100 };
 			SDL_RenderFillRect(m_gfx->rend(), &rect);

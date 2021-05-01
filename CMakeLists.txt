@@ -10,8 +10,10 @@ add_executable(chess
 	src/main.cpp
 	src/graphics.cpp
 	src/chess.cpp
+	src/piece.cpp
 	include/chess.h
 	include/graphics.h
+	include/piece.h
 )
 
 set_property(TARGET chess PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
