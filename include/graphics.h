@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_image.h>
 
 
 class Graphics
@@ -8,6 +9,8 @@ public:
 	Graphics(const char* title);
 
 	~Graphics();
+
+	SDL_Texture* load_texture(const char* fp);
 
 	SDL_Renderer* rend() const { return m_rend; }
 	SDL_Window* window() const { return m_window; }

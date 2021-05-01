@@ -3,7 +3,16 @@
 
 void chess::init()
 {
-	gfx = std::make_unique<Graphics>("chess");
+	m_gfx = std::make_unique<Graphics>("chess");
+	
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
+	m_board += "........";
 }
 
 
@@ -22,10 +31,44 @@ void chess::mainloop()
 			}
 		}
 
-		gfx->clear();
+		m_gfx->clear();
 
-		gfx->display();
+		draw_board();
+
+		m_gfx->display();
 	}
 
-	gfx.reset();
+	m_gfx.reset();
+}
+
+
+void chess::draw_board()
+{
+	bool draw_colored = true;
+
+	for (int y = 0; y < 8; ++y)
+	{
+		for (int x = 0; x < 8; ++x)
+		{
+			draw_colored = !draw_colored;
+
+			if (x == 0)
+			{
+				if (y % 2 == 0)
+					draw_colored = true;
+				else
+					draw_colored = false;
+			}
+
+			if (draw_colored)
+				m_gfx->color({ 128, 0, 0 });
+			else
+				m_gfx->color({ 255, 255, 255 });
+
+			SDL_Rect rect{ x * 100 + 100, y * 100 + 100, 100, 100 };
+			SDL_RenderFillRect(m_gfx->rend(), &rect);
+		}
+	}
+
+	m_gfx->color({ 0, 0, 0 });
 }
