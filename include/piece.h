@@ -1,5 +1,6 @@
 #pragma once
 #include "graphics.h"
+#include <vector>
 
 
 enum class PieceType
@@ -29,11 +30,20 @@ public:
 	bool contains(int x, int y);
 	void move(int x, int y);
 
+	std::vector<SDL_Point> get_valid_moves(const std::vector<Piece>& pieces);
+	const Piece* occupied(int x, int y, const std::vector<Piece>& pieces);
+
 	PieceType type() const { return m_type; }
 	Color color() const { return m_color; }
 
 	int x() const { return (m_rect.x - 100) / 100; }
 	int y() const { return (m_rect.y - 100) / 100; }
+
+	int cx() const { return (m_rect.x + 50 - 100) / 100; }
+	int cy() const { return (m_rect.y + 50 - 100) / 100; }
+
+	int rect_x() const { return m_rect.x; }
+	int rect_y() const { return m_rect.y; }
 
 	SDL_Texture* tex() const { return m_texture; }
 

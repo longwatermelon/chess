@@ -1,8 +1,11 @@
 #include "../include/chess.h"
+#include <iostream>
 
 
 void chess::init()
 {
+	std::cout << "loading pieces\n";
+
 	m_gfx = std::make_unique<Graphics>("chess");
 	m_selected_piece = nullptr;
 
@@ -32,6 +35,8 @@ void chess::init()
 		m_pieces.emplace_back(Piece(type, Color::BLACK, i, 0, m_gfx.get()));
 		m_pieces.emplace_back(Piece(type, Color::WHITE, i, 7, m_gfx.get()));
 	}
+
+	std::cout << "finished\n";
 }
 
 
@@ -78,6 +83,14 @@ void chess::mainloop()
 		m_gfx->clear();
 
 		draw_board();
+
+		m_gfx->color({ 0, 255, 0 });
+		for (auto& p : m_valid_moves)
+		{
+			SDL_Rect rect{ p.x * 100 + 100, p.y * 100 + 100, 100, 100 };
+			SDL_RenderFillRect(m_gfx->rend(), &rect);
+		}
+		m_gfx->color({ 0, 0, 0 });
 
 		for (auto& piece : m_pieces)
 		{
@@ -142,6 +155,8 @@ void chess::handle_mouse(int px, int py, bool mouse_down)
 				if (p.contains(x, y))
 				{
 					m_selected_piece = &p;
+					m_valid_moves = p.get_valid_moves(m_pieces); 
+					m_selected_piece_orig = { p.x(), p.y() };
 					break;
 				}
 			}
@@ -149,6 +164,39 @@ void chess::handle_mouse(int px, int py, bool mouse_down)
 	}
 	else
 	{
-		m_selected_piece = nullptr;
+		if (m_selected_piece)
+		{
+			if (valid_move())
+			{
+				m_selected_piece->move(
+					m_selected_piece->cx() * 100 + 100 - m_selected_piece->rect_x(),
+					m_selected_piece->cy() * 100 + 100 - m_selected_piece->rect_y()
+				);
+			}
+			else
+			{
+				m_selected_piece->move(
+					m_selected_piece_orig.x * 100 + 100 - m_selected_piece->rect_x(),
+					m_selected_piece_orig.y * 100 + 100 - m_selected_piece->rect_y()
+				);
+			}
+
+			m_valid_moves.clear();
+			m_selected_piece = nullptr;
+		}
 	}
+}
+
+
+bool chess::valid_move()
+{
+	bool valid = false;
+
+	for (auto& p : m_valid_moves)
+	{
+		if (m_selected_piece->cx() == p.x && m_selected_piece->cy() == p.y)
+			valid = true;
+	}
+
+	return valid;
 }

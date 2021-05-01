@@ -48,3 +48,91 @@ void Piece::move(int x, int y)
 	m_rect.x += x;
 	m_rect.y += y;
 }
+
+
+std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
+{
+	std::vector<SDL_Point> valid;
+
+	switch (m_type)
+	{
+	case PieceType::PAWN:
+	{
+		int dir = (m_color == Color::BLACK ? -1 : 1);
+
+		if (!occupied(x(), y() - 1 * dir, pieces))
+			valid.emplace_back(SDL_Point{ x(), y() - 1 * dir });
+
+		if ((m_color == Color::BLACK && y() == 1) || (m_color == Color::WHITE && y() == 6))
+			if (!occupied(x(), y() - 2 * dir, pieces))
+				valid.emplace_back(SDL_Point{ x(), y() - 2 * dir });
+
+		return valid;
+	}
+	case PieceType::BISHOP:
+		bool left = true, right = true;
+
+		for (int i = y() - 1; i > -1; --i)
+		{
+			if (!occupied(x() - (y() - i), i, pieces) && left)
+				valid.emplace_back(SDL_Point{ x() - (y() - i) , i });
+			else
+			{
+				if (left && occupied(x() - (y() - i), i, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ x() - (y() - i), i });
+
+				left = false;
+			}
+
+			if (!occupied(x() + (y() - i), i, pieces) && right)
+				valid.emplace_back(SDL_Point{ x() + (y() - i) , i });
+			else
+			{
+				if (right && occupied(x() + (y() - i), i, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ x() + (y() - i), i });
+
+				right = false;
+			}
+		}
+
+		left = true, right = true;
+
+		for (int i = y() + 1; i < 8; ++i)
+		{
+			if (!occupied(x() - (y() - i), i, pieces) && left)
+				valid.emplace_back(SDL_Point{ x() - (y() - i), i });
+			else
+			{
+				if (left && occupied(x() - (y() - i), i, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ x() - (y() - i), i });
+				left = false;
+			}
+
+			if (!occupied(x() + (y() - i), i, pieces) && right)
+				valid.emplace_back(SDL_Point{ x() + (y() - i), i });
+			else
+			{
+				if (right && occupied(x() + (y() - i), i, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ x() + (y() - i), i });
+
+				right = false;
+			}
+		}
+
+		return valid;
+	}
+
+	return std::vector<SDL_Point>();
+}
+
+
+const Piece* Piece::occupied(int x, int y, const std::vector<Piece>& pieces)
+{
+	for (auto& p : pieces)
+	{
+		if (p.x() == x && p.y() == y)
+			return &p;
+	}
+
+	return nullptr;
+}
