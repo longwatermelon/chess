@@ -8,6 +8,7 @@ void chess::init()
 
 	m_gfx = std::make_unique<Graphics>("chess");
 	m_selected_piece = nullptr;
+	m_turn = Color::WHITE;
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -85,20 +86,29 @@ void chess::mainloop()
 		draw_board();
 
 		m_gfx->color({ 0, 255, 0, 80 });
+
 		for (auto& p : m_valid_moves)
 		{
 			SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_BLEND);
+
 			SDL_Rect rect{ p.x * 100 + 100, p.y * 100 + 100, 100, 100 };
 			SDL_RenderFillRect(m_gfx->rend(), &rect);
 
 			SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_NONE);
 		}
+
 		m_gfx->color({ 0, 0, 0, 255 });
 
 		for (auto& piece : m_pieces)
 		{
+			if (&piece == m_selected_piece)
+				continue;
+
 			piece.render(m_gfx.get());
 		}
+
+		if (m_selected_piece)
+			m_selected_piece->render(m_gfx.get());
 
 		m_gfx->display();
 	}
@@ -155,7 +165,7 @@ void chess::handle_mouse(int px, int py, bool mouse_down)
 				int x, y;
 				SDL_GetMouseState(&x, &y);
 
-				if (p.contains(x, y))
+				if (p.contains(x, y) && p.color() == m_turn)
 				{
 					m_selected_piece = &p;
 					m_valid_moves = p.get_valid_moves(m_pieces); 
@@ -175,6 +185,22 @@ void chess::handle_mouse(int px, int py, bool mouse_down)
 					m_selected_piece->cx() * 100 + 100 - m_selected_piece->rect_x(),
 					m_selected_piece->cy() * 100 + 100 - m_selected_piece->rect_y()
 				);
+
+				const Piece* piece = m_selected_piece->occupied(m_selected_piece->cx(), m_selected_piece->cy(), m_pieces, m_selected_piece);
+
+				if (piece)
+				{
+					for (int i = 0; i < m_pieces.size(); ++i)
+					{
+						if (&m_pieces[i] == piece)
+						{
+							m_pieces.erase(m_pieces.begin() + i);
+							break;
+						}
+					}
+				}
+
+				m_turn = (m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
 			}
 			else
 			{

@@ -67,6 +67,16 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 			if (!occupied(x(), y() - 2 * dir, pieces))
 				valid.emplace_back(SDL_Point{ x(), y() - 2 * dir });
 
+		for (int i = -1; i <= 1; i += 2)
+		{
+			const Piece* p = occupied(x() + i, y() - 1 * dir, pieces);
+			
+			if (p)
+			{
+				valid.emplace_back(SDL_Point{ x() + i, y() - 1 * dir });
+			}
+		}
+
 		return valid;
 	}
 	case PieceType::BISHOP:
@@ -149,10 +159,13 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 }
 
 
-const Piece* Piece::occupied(int x, int y, const std::vector<Piece>& pieces)
+const Piece* Piece::occupied(int x, int y, const std::vector<Piece>& pieces, Piece* ignored)
 {
 	for (auto& p : pieces)
 	{
+		if (&p == ignored)
+			continue;
+
 		if (p.x() == x && p.y() == y)
 			return &p;
 	}

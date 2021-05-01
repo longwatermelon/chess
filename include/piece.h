@@ -31,7 +31,7 @@ public:
 	void move(int x, int y);
 
 	std::vector<SDL_Point> get_valid_moves(const std::vector<Piece>& pieces);
-	const Piece* occupied(int x, int y, const std::vector<Piece>& pieces);
+	const Piece* occupied(int x, int y, const std::vector<Piece>& pieces, Piece* ignored = nullptr);
 
 	void scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<Piece>& pieces);
 
