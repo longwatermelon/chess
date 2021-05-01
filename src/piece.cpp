@@ -19,6 +19,8 @@ Piece::Piece(PieceType type, Color color, int x, int y, Graphics* gfx)
 
 	fp += ".png";
 
+	// some wasted memory since i could just reuse already created textures
+	// but this is more convenient to code
 	m_texture = gfx->load_texture(fp.c_str());
 
 	m_rect.x = 100 + x * 100;
@@ -31,4 +33,18 @@ Piece::Piece(PieceType type, Color color, int x, int y, Graphics* gfx)
 void Piece::render(Graphics* gfx)
 {
 	SDL_RenderCopy(gfx->rend(), m_texture, NULL, &m_rect);
+}
+
+
+bool Piece::contains(int x, int y)
+{
+	return m_rect.x <= x && m_rect.x + m_rect.w >= x
+		&& m_rect.y <= y && m_rect.y + m_rect.h >= y;
+}
+
+
+void Piece::move(int x, int y)
+{
+	m_rect.x += x;
+	m_rect.y += y;
 }

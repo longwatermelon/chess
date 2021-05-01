@@ -4,6 +4,7 @@
 void chess::init()
 {
 	m_gfx = std::make_unique<Graphics>("chess");
+	m_selected_piece = nullptr;
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -39,15 +40,33 @@ void chess::mainloop()
 	bool running = true;
 	SDL_Event evt;
 
+	bool mouse_down = false;
+
+	int prev_x, prev_y;
+	SDL_GetMouseState(&prev_x, &prev_y);
+
 	while (running)
 	{
 		while (SDL_PollEvent(&evt))
 		{
 			switch (evt.type)
 			{
-			case SDL_QUIT: running = false; break;
+			case SDL_QUIT:
+				running = false;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				mouse_down = true;
+				break;
+			case SDL_MOUSEBUTTONUP:
+				mouse_down = false;
+				handle_mouse(prev_x, prev_y, mouse_down);
+				break;
 			}
 		}
+
+		if (mouse_down) handle_mouse(prev_x, prev_y, mouse_down);
+
+		SDL_GetMouseState(&prev_x, &prev_y);
 
 		m_gfx->clear();
 
@@ -99,4 +118,37 @@ void chess::draw_board()
 	}
 
 	m_gfx->color({ 0, 0, 0 });
+}
+
+
+void chess::handle_mouse(int px, int py, bool mouse_down)
+{
+	if (mouse_down)
+	{
+		if (!m_selected_piece)
+		{
+			for (auto& p : m_pieces)
+			{
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+
+				if (p.contains(x, y))
+				{
+					m_selected_piece = &p;
+					break;
+				}
+			}
+		}
+		else
+		{
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+
+			m_selected_piece->move(x - px, y - py);
+		}
+	}
+	else
+	{
+		m_selected_piece = nullptr;
+	}
 }

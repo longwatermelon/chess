@@ -26,6 +26,9 @@ public:
 
 	void render(Graphics* gfx);
 
+	bool contains(int x, int y);
+	void move(int x, int y);
+
 	PieceType type() const { return m_type; }
 	Color color() const { return m_color; }
 
