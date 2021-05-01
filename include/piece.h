@@ -33,6 +33,8 @@ public:
 	std::vector<SDL_Point> get_valid_moves(const std::vector<Piece>& pieces);
 	const Piece* occupied(int x, int y, const std::vector<Piece>& pieces);
 
+	void scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<Piece>& pieces);
+
 	PieceType type() const { return m_type; }
 	Color color() const { return m_color; }
 

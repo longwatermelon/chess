@@ -70,56 +70,23 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 		return valid;
 	}
 	case PieceType::BISHOP:
-		bool left = true, right = true;
-
-		for (int i = y() - 1; i > -1; --i)
-		{
-			if (!occupied(x() - (y() - i), i, pieces) && left)
-				valid.emplace_back(SDL_Point{ x() - (y() - i) , i });
-			else
-			{
-				if (left && occupied(x() - (y() - i), i, pieces)->color() != m_color)
-					valid.emplace_back(SDL_Point{ x() - (y() - i), i });
-
-				left = false;
-			}
-
-			if (!occupied(x() + (y() - i), i, pieces) && right)
-				valid.emplace_back(SDL_Point{ x() + (y() - i) , i });
-			else
-			{
-				if (right && occupied(x() + (y() - i), i, pieces)->color() != m_color)
-					valid.emplace_back(SDL_Point{ x() + (y() - i), i });
-
-				right = false;
-			}
-		}
-
-		left = true, right = true;
-
-		for (int i = y() + 1; i < 8; ++i)
-		{
-			if (!occupied(x() - (y() - i), i, pieces) && left)
-				valid.emplace_back(SDL_Point{ x() - (y() - i), i });
-			else
-			{
-				if (left && occupied(x() - (y() - i), i, pieces)->color() != m_color)
-					valid.emplace_back(SDL_Point{ x() - (y() - i), i });
-				left = false;
-			}
-
-			if (!occupied(x() + (y() - i), i, pieces) && right)
-				valid.emplace_back(SDL_Point{ x() + (y() - i), i });
-			else
-			{
-				if (right && occupied(x() + (y() - i), i, pieces)->color() != m_color)
-					valid.emplace_back(SDL_Point{ x() + (y() - i), i });
-
-				right = false;
-			}
-		}
+	{
+		scan(1, 1, valid, pieces);
+		scan(-1, -1, valid, pieces);
+		scan(1, -1, valid, pieces);
+		scan(-1, 1, valid, pieces);
 
 		return valid;
+	}
+	case PieceType::ROOK:
+	{
+		scan(1, 0, valid, pieces);
+		scan(-1, 0, valid, pieces);
+		scan(0, 1, valid, pieces);
+		scan(0, -1, valid, pieces);
+
+		return valid;
+	}
 	}
 
 	return std::vector<SDL_Point>();
@@ -135,4 +102,76 @@ const Piece* Piece::occupied(int x, int y, const std::vector<Piece>& pieces)
 	}
 
 	return nullptr;
+}
+
+
+void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<Piece>& pieces)
+{
+	bool blocked = false;
+
+	if (ydir != 0 && xdir != 0)
+	{
+		int upper = (ydir == 1 ? 8 : -1);
+
+		for (int i = y() + ydir; (upper < 0 ? i > upper : i < upper); i += ydir)
+		{
+			int current_x = x() + xdir * abs(y() - i);
+			int current_y = i;
+
+			if (!occupied(current_x, current_y, pieces) && !blocked)
+			{
+				valid.emplace_back(SDL_Point{ current_x, current_y });
+			}
+			else
+			{
+				if (!blocked && occupied(current_x, current_y, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ current_x, current_y });
+
+				blocked = true;
+			}
+		}
+	}
+	else
+	{
+		int begin;
+		int dir;
+		bool static_x = false;
+
+		if (ydir == 0)
+		{
+			begin = x() + xdir;
+			dir = xdir;
+		}
+		else
+		{
+			begin = y() + ydir;
+			dir = ydir;
+			static_x = true;
+		}
+
+		for (int i = begin; (dir == 1 ? i < 8 : i > -1); i += dir)
+		{
+			int ox, oy;
+			if (static_x)
+			{
+				oy = i;
+				ox = x();
+			}
+			else
+			{
+				oy = y();
+				ox = i;
+			}
+
+			if (!occupied(ox, oy, pieces) && !blocked)
+				valid.emplace_back(SDL_Point{ ox, oy });
+			else
+			{
+				if (!blocked && occupied(ox, oy, pieces)->color() != m_color)
+					valid.emplace_back(SDL_Point{ ox, oy });
+
+				blocked = true;
+			}
+		}
+	}
 }
