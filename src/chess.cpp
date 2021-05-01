@@ -56,15 +56,22 @@ void chess::mainloop()
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				mouse_down = true;
+				handle_mouse(prev_x, prev_y, true);
 				break;
 			case SDL_MOUSEBUTTONUP:
 				mouse_down = false;
-				handle_mouse(prev_x, prev_y, mouse_down);
+				handle_mouse(prev_x, prev_y, false);
 				break;
 			}
 		}
 
-		if (mouse_down) handle_mouse(prev_x, prev_y, mouse_down);
+		if (m_selected_piece)
+		{
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+
+			m_selected_piece->move(x - prev_x, y - prev_y);
+		}
 
 		SDL_GetMouseState(&prev_x, &prev_y);
 
@@ -138,13 +145,6 @@ void chess::handle_mouse(int px, int py, bool mouse_down)
 					break;
 				}
 			}
-		}
-		else
-		{
-			int x, y;
-			SDL_GetMouseState(&x, &y);
-
-			m_selected_piece->move(x - px, y - py);
 		}
 	}
 	else
