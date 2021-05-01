@@ -36,7 +36,5 @@ find_path(SDL2_IMAGE_INCLUDE
 	PATH_SUFFIXES SDL2_image-2.0.5/include
 )
 
-target_include_directories(common PUBLIC ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE})
+target_include_directories(common PUBLIC ${CMAKE_SOURCE_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE})
 target_link_libraries(common PUBLIC ${SDL2_LIB} ${SDL2MAIN_LIB} ${SDL2_IMAGE_LIB})
-
-target_include_directories(common PUBLIC ${CMAKE_SOURCE_DIR})
