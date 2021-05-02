@@ -4,9 +4,11 @@ add_library(core
 	src/graphics.cpp
 	src/piece.cpp
 	src/core.cpp
+	src/utils.cpp
 	include/graphics.h
 	include/piece.h
 	include/core.h
+	include/utils.h
 )
 
 find_library(SDL2_LIB
