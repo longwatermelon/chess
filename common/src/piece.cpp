@@ -50,6 +50,15 @@ void Piece::move(int x, int y)
 }
 
 
+void Piece::move_to(int gx, int gy)
+{
+	move(
+		gx * 100 + 100 - m_rect.x,
+		gy * 100 + 100 - m_rect.y
+	);
+}
+
+
 std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 {
 	std::vector<SDL_Point> valid;
@@ -71,7 +80,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 		{
 			const Piece* p = occupied(x() + i, y() - 1 * dir, pieces);
 			
-			if (p)
+			if (p && p->color() != m_color)
 			{
 				valid.emplace_back(SDL_Point{ x() + i, y() - 1 * dir });
 			}

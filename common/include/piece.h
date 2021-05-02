@@ -29,6 +29,7 @@ public:
 
 	bool contains(int x, int y);
 	void move(int x, int y);
+	void move_to(int gx, int gy);
 
 	std::vector<SDL_Point> get_valid_moves(const std::vector<Piece>& pieces);
 	const Piece* occupied(int x, int y, const std::vector<Piece>& pieces, Piece* ignored = nullptr);

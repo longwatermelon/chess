@@ -3,8 +3,10 @@ project(common)
 add_library(common
 	src/graphics.cpp
 	src/piece.cpp
+	src/core.cpp
 	include/graphics.h
 	include/piece.h
+	include/core.h
 )
 
 find_library(SDL2_LIB

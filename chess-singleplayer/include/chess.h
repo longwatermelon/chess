@@ -1,4 +1,14 @@
 #pragma once
+#include <common/include/core.h>
+
+namespace chess
+{
+	void mainloop();
+}
+
+
+#if 0
+#pragma once
 #include <common/include/graphics.h>
 #include <common/include/piece.h>
 #include <memory>
@@ -28,3 +38,4 @@ namespace chess
 
 	bool valid_move();
 }
+#endif
