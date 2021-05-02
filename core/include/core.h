@@ -17,29 +17,14 @@ namespace core
 
     inline Color m_turn{ Color::WHITE };
 
-    inline Piece* b_king{ nullptr }, * w_king{ nullptr };
-
     void draw_board();
 
     void handle_mouse(int px, int py, bool mouse_down);
 
-    bool valid_move(Piece& piece);
-
-    Piece* piece_at(int x, int y, Piece* ignored = nullptr);
-    void eat_piece(Piece* piece);
-
     void piece_follow_cursor(int px, int py);
+    void new_piece(PieceType type, Color color, int gridx, int gridy);
 
     void clear_and_draw();
 
     void cleanup();
-
-    void new_piece(PieceType type, Color color, int gridx, int gridy);
-
-    void find_kings();
-
-    bool check(Piece* king);
-    bool checkmate(Piece* king);
-
-    std::vector<SDL_Point> get_real_valid_moves(Piece* piece, SDL_Point orig);
 }

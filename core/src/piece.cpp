@@ -1,4 +1,5 @@
 #include "../include/piece.h"
+#include "../include/utils.h"
 #include <string>
 
 
@@ -59,7 +60,7 @@ void Piece::grid_move_to(int gx, int gy)
 }
 
 
-std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<Piece>>& pieces)
+std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>>& pieces)
 {
     std::vector<SDL_Point> valid;
 
@@ -69,16 +70,16 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<
     {
         int dir = (m_color == Color::BLACK ? -1 : 1);
 
-        if (!occupied(x(), y() - 1 * dir, pieces))
+        if (!utils::piece_at(pieces, x(), y() - 1 * dir))
             valid.emplace_back(SDL_Point{ x(), y() - 1 * dir });
 
         if ((m_color == Color::BLACK && y() == 1) || (m_color == Color::WHITE && y() == 6))
-            if (!occupied(x(), y() - 2 * dir, pieces))
+            if (!utils::piece_at(pieces, x(), y() - 2 * dir))
                 valid.emplace_back(SDL_Point{ x(), y() - 2 * dir });
 
         for (int i = -1; i <= 1; i += 2)
         {
-            const Piece* p = occupied(x() + i, y() - 1 * dir, pieces);
+            Piece* p = utils::piece_at(pieces, x() + i, y() - 1 * dir);
             
             if (p && p->color() != m_color)
             {
@@ -114,7 +115,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<
             {
                 if (abs((j - x()) * (i - y())) == 2)
                 {
-                    const Piece* piece = occupied(j, i, pieces);
+                    Piece* piece = utils::piece_at(pieces, j, i);
 
                     if (piece && piece->color() == m_color)
                         continue;
@@ -133,7 +134,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<
         {
             for (int j = x() - 1; j <= x() + 1; ++j)
             {
-                const Piece* piece = occupied(j, i, pieces);
+                Piece* piece = utils::piece_at(pieces, j, i);
 
                 if (piece && piece->color() == m_color)
                     continue;
@@ -168,22 +169,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<
 }
 
 
-const Piece* Piece::occupied(int x, int y, const std::vector<std::unique_ptr<Piece>>& pieces, Piece* ignored)
-{
-    for (auto& p : pieces)
-    {
-        if (p.get() == ignored)
-            continue;
-
-        if (p->x() == x && p->y() == y)
-            return p.get();
-    }
-
-    return nullptr;
-}
-
-
-void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<std::unique_ptr<Piece>>& pieces)
+void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<std::unique_ptr<Piece>>& pieces)
 {
     bool blocked = false;
 
@@ -199,13 +185,13 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::v
             if (current_x < 0 || current_x > 7 || current_y < 0 || current_y > 7)
                 continue;
 
-            if (!occupied(current_x, current_y, pieces) && !blocked)
+            if (!utils::piece_at(pieces, current_x, current_y) && !blocked)
             {
                 valid.emplace_back(SDL_Point{ current_x, current_y });
             }
             else
             {
-                if (!blocked && occupied(current_x, current_y, pieces)->color() != m_color)
+                if (!blocked && utils::piece_at(pieces, current_x, current_y)->color() != m_color)
                     valid.emplace_back(SDL_Point{ current_x, current_y });
 
                 blocked = true;
@@ -244,11 +230,11 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::v
                 ox = i;
             }
 
-            if (!occupied(ox, oy, pieces) && !blocked)
+            if (!utils::piece_at(pieces, ox, oy) && !blocked)
                 valid.emplace_back(SDL_Point{ ox, oy });
             else
             {
-                if (!blocked && occupied(ox, oy, pieces)->color() != m_color)
+                if (!blocked && utils::piece_at(pieces, ox, oy)->color() != m_color)
                     valid.emplace_back(SDL_Point{ ox, oy });
 
                 blocked = true;

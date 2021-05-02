@@ -49,7 +49,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                 {
                     m_selected_piece = p.get();
                     m_selected_piece_grid_orig = { p->x(), p->y() };
-                    m_valid_moves = get_real_valid_moves(m_selected_piece, m_selected_piece_grid_orig);
+                    m_valid_moves = utils::get_real_valid_moves(m_pieces, m_selected_piece, m_selected_piece_grid_orig);
 
                     break;
                 }
@@ -60,15 +60,15 @@ void core::handle_mouse(int px, int py, bool mouse_down)
     {
         if (m_selected_piece)
         {
-            if (valid_move(*m_selected_piece))
+            if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->cx(), m_selected_piece->cy()))
             {
                 m_selected_piece->grid_move_to(m_selected_piece->cx(), m_selected_piece->cy());
 
-                Piece* piece = piece_at(m_selected_piece->x(), m_selected_piece->y(), m_selected_piece);
+                Piece* piece = utils::piece_at(m_pieces, m_selected_piece->x(), m_selected_piece->y(), m_selected_piece);
 
                 if (piece)
                 {
-                    eat_piece(piece);
+                    utils::eat_piece(m_pieces, piece);
                 }
 
                 m_turn = (m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
@@ -81,59 +81,17 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             m_valid_moves.clear();
             m_selected_piece = nullptr;
 
-            if (check(w_king))
+            if (utils::check(m_pieces, utils::get_king(m_pieces, Color::WHITE)))
                 std::cout << "white is in check\n";
 
-            if (check(b_king))
+            if (utils::check(m_pieces, utils::get_king(m_pieces, Color::BLACK)))
                 std::cout << "black is in check\n";
 
-            if (checkmate(w_king))
+            if (utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::WHITE)))
                 std::cout << "white is in checkmate, black wins\n";
 
-            if (checkmate(b_king))
+            if (utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::BLACK)))
                 std::cout << "black is in checkmate, white wins\n";
-        }
-    }
-}
-
-
-bool core::valid_move(Piece& piece)
-{
-    bool valid = false;
-
-    for (auto& p : m_valid_moves)
-    {
-        if (m_selected_piece->cx() == p.x && m_selected_piece->cy() == p.y)
-            valid = true;
-    }
-
-    return valid;
-}
-
-
-Piece* core::piece_at(int x, int y, Piece* ignored)
-{
-    for (auto& p : m_pieces)
-    {
-        if (p.get() == ignored)
-            continue;
-
-        if (p->x() == x && p->y() == y)
-            return p.get();
-    }
-
-    return nullptr;
-}
-
-
-void core::eat_piece(Piece* piece)
-{
-    for (int i = 0; i < m_pieces.size(); ++i)
-    {
-        if (m_pieces[i].get() == piece)
-        {
-            m_pieces.erase(m_pieces.begin() + i);
-            break;
         }
     }
 }
@@ -148,6 +106,12 @@ void core::piece_follow_cursor(int px, int py)
     {
         m_selected_piece->move(x - px, y - py);
     }
+}
+
+
+void core::new_piece(PieceType type, Color color, int gridx, int gridy)
+{
+    m_pieces.emplace_back(std::make_unique<Piece>(type, color, gridx, gridy, m_gfx.get()));
 }
 
 
@@ -197,97 +161,4 @@ void core::cleanup()
     }
 
     m_gfx.reset();
-}
-
-
-void core::new_piece(PieceType type, Color color, int gridx, int gridy)
-{
-    m_pieces.emplace_back(std::make_unique<Piece>(type, color, gridx, gridy, m_gfx.get()));
-}
-
-
-void core::find_kings()
-{
-    for (auto& p : m_pieces)
-    {
-        if (p->type() == PieceType::KING)
-        {
-            switch (p->color())
-            {
-            case Color::BLACK: b_king = p.get(); break;
-            case Color::WHITE: w_king = p.get(); break;
-            }
-        }
-    }
-}
-
-
-bool core::check(Piece* king)
-{
-    bool in_check = false;
-
-    for (auto& piece : m_pieces)
-    {
-        if (piece->color() == king->color())
-            continue;
-
-        for (auto& m : piece->get_valid_moves(m_pieces))
-        {
-            if (m.x == king->x() && m.y == king->y())
-                in_check = true;
-        }
-    }
-
-    return in_check;
-}
-
-
-bool core::checkmate(Piece* king)
-{
-    bool is_checkmate = true;
-
-    for (auto& p : m_pieces)
-    {
-        if (p->color() != king->color())
-            continue;
-        
-        std::vector<SDL_Point> valid = get_real_valid_moves(p.get(), { p->x(), p->y() });
-
-        if (valid.size() > 0)
-            is_checkmate = false;
-    }
-
-    return is_checkmate;
-}
-
-
-std::vector<SDL_Point> core::get_real_valid_moves(Piece* piece, SDL_Point orig)
-{
-    std::vector<SDL_Point> valid = piece->get_valid_moves(m_pieces);
-
-    Piece* king = (piece->color() == Color::WHITE ? w_king : b_king);
-
-    for (int i = 0; i < valid.size(); ++i)
-    {
-        SDL_Point& point = valid[i];
-        ScopedMove move(piece, point.x, point.y, orig);
-
-        ScopedErase* erase = nullptr;
-
-        if (piece_at(point.x, point.y, piece))
-        {
-            ScopedErase* tmp = new ScopedErase(piece_at(point.x, point.y, piece), m_pieces);
-            erase = tmp;
-        }
-
-        if (check(king))
-        {
-            valid.erase(valid.begin() + i);
-            --i;
-        }
-
-        delete erase;
-    }
-
-    return valid;
 }
