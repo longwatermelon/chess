@@ -59,7 +59,7 @@ void Piece::grid_move_to(int gx, int gy)
 }
 
 
-std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
+std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<std::unique_ptr<Piece>>& pieces)
 {
     std::vector<SDL_Point> valid;
 
@@ -168,22 +168,22 @@ std::vector<SDL_Point> Piece::get_valid_moves(const std::vector<Piece>& pieces)
 }
 
 
-const Piece* Piece::occupied(int x, int y, const std::vector<Piece>& pieces, Piece* ignored)
+const Piece* Piece::occupied(int x, int y, const std::vector<std::unique_ptr<Piece>>& pieces, Piece* ignored)
 {
     for (auto& p : pieces)
     {
-        if (&p == ignored)
+        if (p.get() == ignored)
             continue;
 
-        if (p.x() == x && p.y() == y)
-            return &p;
+        if (p->x() == x && p->y() == y)
+            return p.get();
     }
 
     return nullptr;
 }
 
 
-void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<Piece>& pieces)
+void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<std::unique_ptr<Piece>>& pieces)
 {
     bool blocked = false;
 

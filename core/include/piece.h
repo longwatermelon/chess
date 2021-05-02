@@ -1,6 +1,7 @@
 #pragma once
 #include "graphics.h"
 #include <vector>
+#include <memory>
 
 
 enum class PieceType
@@ -31,10 +32,10 @@ public:
     void move(int x, int y);
     void grid_move_to(int gx, int gy);
 
-    std::vector<SDL_Point> get_valid_moves(const std::vector<Piece>& pieces);
-    const Piece* occupied(int x, int y, const std::vector<Piece>& pieces, Piece* ignored = nullptr);
+    std::vector<SDL_Point> get_valid_moves(const std::vector<std::unique_ptr<Piece>>& pieces);
+    const Piece* occupied(int x, int y, const std::vector<std::unique_ptr<Piece>>& pieces, Piece* ignored = nullptr);
 
-    void scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<Piece>& pieces);
+    void scan(int xdir, int ydir, std::vector<SDL_Point>& valid, const std::vector<std::unique_ptr<Piece>>& pieces);
 
     PieceType type() const { return m_type; }
     Color color() const { return m_color; }

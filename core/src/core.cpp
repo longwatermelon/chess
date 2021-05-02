@@ -45,13 +45,11 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                 int x, y;
                 SDL_GetMouseState(&x, &y);
 
-                if (p.contains(x, y) && p.color() == m_turn)
+                if (p->contains(x, y) && p->color() == m_turn)
                 {
-                    m_selected_piece = &p;
-                    m_selected_piece_grid_orig = { p.x(), p.y() };
+                    m_selected_piece = p.get();
+                    m_selected_piece_grid_orig = { p->x(), p->y() };
                     m_valid_moves = m_selected_piece->get_valid_moves(m_pieces);
-
-                    find_kings();
 
                     Piece* king = (m_selected_piece->color() == Color::WHITE ? w_king : b_king);
 
@@ -84,7 +82,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
 
                 if (piece)
                 {
-                    eat_piece(*piece);
+                    eat_piece(piece);
                 }
 
                 m_turn = (m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
@@ -96,8 +94,6 @@ void core::handle_mouse(int px, int py, bool mouse_down)
 
             m_valid_moves.clear();
             m_selected_piece = nullptr;
-
-            find_kings();
 
             if (check(w_king))
                 std::cout << "white is in check\n";
@@ -127,22 +123,22 @@ Piece* core::piece_at(int x, int y, Piece* ignored)
 {
     for (auto& p : m_pieces)
     {
-        if (&p == ignored)
+        if (p.get() == ignored)
             continue;
 
-        if (p.x() == x && p.y() == y)
-            return &p;
+        if (p->x() == x && p->y() == y)
+            return p.get();
     }
 
     return nullptr;
 }
 
 
-void core::eat_piece(Piece& piece)
+void core::eat_piece(Piece* piece)
 {
     for (int i = 0; i < m_pieces.size(); ++i)
     {
-        if (&m_pieces[i] == &piece)
+        if (m_pieces[i].get() == piece)
         {
             m_pieces.erase(m_pieces.begin() + i);
             break;
@@ -188,10 +184,10 @@ void core::clear_and_draw()
 
     for (auto& piece : m_pieces)
     {
-        if (&piece == m_selected_piece)
+        if (piece.get() == m_selected_piece)
             continue; // selected piece will always be on the top layer if drawn last
 
-        piece.render(m_gfx.get());
+        piece->render(m_gfx.get());
     }
 
     if (m_selected_piece)
@@ -205,7 +201,7 @@ void core::cleanup()
 {
     for (auto& p : m_pieces)
     {
-        SDL_DestroyTexture(p.tex());
+        SDL_DestroyTexture(p->tex());
     }
 
     m_gfx.reset();
@@ -214,7 +210,7 @@ void core::cleanup()
 
 void core::new_piece(PieceType type, Color color, int gridx, int gridy)
 {
-    m_pieces.emplace_back(Piece(type, color, gridx, gridy, m_gfx.get()));
+    m_pieces.emplace_back(std::make_unique<Piece>(type, color, gridx, gridy, m_gfx.get()));
 }
 
 
@@ -222,12 +218,12 @@ void core::find_kings()
 {
     for (auto& p : m_pieces)
     {
-        if (p.type() == PieceType::KING)
+        if (p->type() == PieceType::KING)
         {
-            switch (p.color())
+            switch (p->color())
             {
-            case Color::BLACK: b_king = &p; break;
-            case Color::WHITE: w_king = &p; break;
+            case Color::BLACK: b_king = p.get(); break;
+            case Color::WHITE: w_king = p.get(); break;
             }
         }
     }
@@ -240,10 +236,10 @@ bool core::check(Piece* king)
 
     for (auto& piece : m_pieces)
     {
-        if (piece.color() == king->color())
+        if (piece->color() == king->color())
             continue;
 
-        for (auto& m : piece.get_valid_moves(m_pieces))
+        for (auto& m : piece->get_valid_moves(m_pieces))
         {
             if (m.x == king->x() && m.y == king->y())
                 in_check = true;

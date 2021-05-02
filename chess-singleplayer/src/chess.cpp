@@ -31,6 +31,8 @@ void chess::mainloop()
         core::new_piece(type, Color::WHITE, i, 7);
     }
 
+    core::find_kings();
+
     bool running = true;
     SDL_Event evt;
 
