@@ -7,7 +7,7 @@
 class ScopedMove
 {
 public:
-    ScopedMove(Piece* piece, int gridx, int gridy);
+    ScopedMove(Piece* piece, int gridx, int gridy, SDL_Point orig_point);
 
     ~ScopedMove();
 

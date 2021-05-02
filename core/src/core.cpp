@@ -50,6 +50,23 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                     m_selected_piece = &p;
                     m_selected_piece_grid_orig = { p.x(), p.y() };
                     m_valid_moves = m_selected_piece->get_valid_moves(m_pieces);
+
+                    find_kings();
+
+                    Piece* king = (m_selected_piece->color() == Color::WHITE ? w_king : b_king);
+
+                    for (int i = 0; i < m_valid_moves.size(); ++i)
+                    {
+                        SDL_Point& point = m_valid_moves[i];
+                        ScopedMove move(m_selected_piece, point.x, point.y, m_selected_piece_grid_orig);
+
+                        if (check(king))
+                        {
+                            m_valid_moves.erase(m_valid_moves.begin() + i);
+                            --i;
+                        }
+                    }
+
                     break;
                 }
             }
@@ -237,11 +254,9 @@ bool core::check(Piece* king)
 }
 
 
-ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy)
-    : m_piece(piece)
+ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy, SDL_Point orig_point)
+    : m_piece(piece), m_orig_grid_point(orig_point)
 {
-    m_orig_grid_point = { piece->x(), piece->y() };
-
     piece->grid_move_to(gridx, gridy);
 }
 
