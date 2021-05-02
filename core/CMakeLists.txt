@@ -1,6 +1,6 @@
-project(common)
+project(core)
 
-add_library(common
+add_library(core
 	src/graphics.cpp
 	src/piece.cpp
 	src/core.cpp
@@ -38,5 +38,5 @@ find_path(SDL2_IMAGE_INCLUDE
 	PATH_SUFFIXES SDL2_image-2.0.5/include
 )
 
-target_include_directories(common PUBLIC ${CMAKE_SOURCE_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE})
-target_link_libraries(common PUBLIC ${SDL2_LIB} ${SDL2MAIN_LIB} ${SDL2_IMAGE_LIB})
+target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE})
+target_link_libraries(core PUBLIC ${SDL2_LIB} ${SDL2MAIN_LIB} ${SDL2_IMAGE_LIB})
