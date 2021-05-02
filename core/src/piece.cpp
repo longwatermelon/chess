@@ -50,7 +50,7 @@ void Piece::move(int x, int y)
 }
 
 
-void Piece::move_to(int gx, int gy)
+void Piece::grid_move_to(int gx, int gy)
 {
     move(
         gx * 100 + 100 - m_rect.x,

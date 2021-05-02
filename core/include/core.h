@@ -4,13 +4,26 @@
 #include <vector>
 
 
+class ScopedMove
+{
+public:
+    ScopedMove(Piece* piece, int gridx, int gridy);
+
+    ~ScopedMove();
+
+private:
+    Piece* m_piece;
+    SDL_Point m_orig_grid_point;
+};
+
+
 namespace core
 {
     inline std::unique_ptr<Graphics> m_gfx{ std::make_unique<Graphics>("chess") };
     inline std::vector<Piece> m_pieces;
 
     inline Piece* m_selected_piece{ nullptr };
-    inline SDL_Point m_selected_piece_orig{ 0, 0 };
+    inline SDL_Point m_selected_piece_grid_orig{ 0, 0 };
 
     inline std::vector<SDL_Point> m_valid_moves;
 
@@ -33,7 +46,7 @@ namespace core
 
     void cleanup();
 
-    void new_piece(PieceType type, Color color, int x, int y);
+    void new_piece(PieceType type, Color color, int gridx, int gridy);
 
     void find_kings();
 

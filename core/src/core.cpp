@@ -48,7 +48,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                 if (p.contains(x, y) && p.color() == m_turn)
                 {
                     m_selected_piece = &p;
-                    m_selected_piece_orig = { p.x(), p.y() };
+                    m_selected_piece_grid_orig = { p.x(), p.y() };
                     m_valid_moves = m_selected_piece->get_valid_moves(m_pieces);
                     break;
                 }
@@ -61,7 +61,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
         {
             if (valid_move(*m_selected_piece))
             {
-                m_selected_piece->move_to(m_selected_piece->cx(), m_selected_piece->cy());
+                m_selected_piece->grid_move_to(m_selected_piece->cx(), m_selected_piece->cy());
 
                 Piece* piece = piece_at(m_selected_piece->x(), m_selected_piece->y(), m_selected_piece);
 
@@ -74,7 +74,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             }
             else
             {
-                m_selected_piece->move_to(m_selected_piece_orig.x, m_selected_piece_orig.y);
+                m_selected_piece->grid_move_to(m_selected_piece_grid_orig.x, m_selected_piece_grid_orig.y);
             }
 
             m_valid_moves.clear();
@@ -195,9 +195,9 @@ void core::cleanup()
 }
 
 
-void core::new_piece(PieceType type, Color color, int x, int y)
+void core::new_piece(PieceType type, Color color, int gridx, int gridy)
 {
-    m_pieces.emplace_back(Piece(type, color, x, y, m_gfx.get()));
+    m_pieces.emplace_back(Piece(type, color, gridx, gridy, m_gfx.get()));
 }
 
 
@@ -234,4 +234,19 @@ bool core::check(Piece* king)
     }
 
     return in_check;
+}
+
+
+ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy)
+    : m_piece(piece)
+{
+    m_orig_grid_point = { piece->x(), piece->y() };
+
+    piece->grid_move_to(gridx, gridy);
+}
+
+
+ScopedMove::~ScopedMove()
+{
+    m_piece->grid_move_to(m_orig_grid_point.x, m_orig_grid_point.y);
 }
