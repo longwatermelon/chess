@@ -16,6 +16,8 @@ namespace core
 
     inline Color m_turn{ Color::WHITE };
 
+    inline Piece* b_king{ nullptr }, * w_king{ nullptr };
+
     void draw_board();
 
     void handle_mouse(int px, int py, bool mouse_down);
@@ -32,4 +34,8 @@ namespace core
     void cleanup();
 
     void new_piece(PieceType type, Color color, int x, int y);
+
+    void find_kings();
+
+    bool check(Piece* king);
 }

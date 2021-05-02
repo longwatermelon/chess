@@ -1,4 +1,5 @@
 #include "../include/core.h"
+#include <iostream>
 
 
 void core::draw_board()
@@ -78,6 +79,14 @@ void core::handle_mouse(int px, int py, bool mouse_down)
 
             m_valid_moves.clear();
             m_selected_piece = nullptr;
+
+            find_kings();
+
+            if (check(w_king))
+                std::cout << "white is in check\n";
+
+            if (check(b_king))
+                std::cout << "black is in check\n";
         }
     }
 }
@@ -189,4 +198,40 @@ void core::cleanup()
 void core::new_piece(PieceType type, Color color, int x, int y)
 {
     m_pieces.emplace_back(Piece(type, color, x, y, m_gfx.get()));
+}
+
+
+void core::find_kings()
+{
+    for (auto& p : m_pieces)
+    {
+        if (p.type() == PieceType::KING)
+        {
+            switch (p.color())
+            {
+            case Color::BLACK: b_king = &p; break;
+            case Color::WHITE: w_king = &p; break;
+            }
+        }
+    }
+}
+
+
+bool core::check(Piece* king)
+{
+    bool in_check = false;
+
+    for (auto& piece : m_pieces)
+    {
+        if (piece.color() == king->color())
+            continue;
+
+        for (auto& m : piece.get_valid_moves(m_pieces))
+        {
+            if (m.x == king->x() && m.y == king->y())
+                in_check = true;
+        }
+    }
+
+    return in_check;
 }
