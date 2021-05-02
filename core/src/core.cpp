@@ -51,7 +51,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                     m_selected_piece_grid_orig = { p->x(), p->y() };
                     m_valid_moves = m_selected_piece->get_valid_moves(m_pieces);
 
-                    Piece* king = (m_selected_piece->color() == Color::WHITE ? w_king : b_king);
+                    /*Piece* king = (m_selected_piece->color() == Color::WHITE ? w_king : b_king);
 
                     for (int i = 0; i < m_valid_moves.size(); ++i)
                     {
@@ -73,7 +73,8 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                         }
 
                         delete erase;
-                    }
+                    }*/
+                    m_valid_moves = get_real_valid_moves(m_selected_piece, m_selected_piece_grid_orig);
 
                     break;
                 }
@@ -110,6 +111,12 @@ void core::handle_mouse(int px, int py, bool mouse_down)
 
             if (check(b_king))
                 std::cout << "black is in check\n";
+
+            if (checkmate(w_king))
+                std::cout << "white is in checkmate, black wins\n";
+
+            if (checkmate(b_king))
+                std::cout << "black is in checkmate, white wins\n";
         }
     }
 }
@@ -257,4 +264,55 @@ bool core::check(Piece* king)
     }
 
     return in_check;
+}
+
+
+bool core::checkmate(Piece* king)
+{
+    bool is_checkmate = true;
+
+    for (auto& p : m_pieces)
+    {
+        if (p->color() != king->color())
+            continue;
+        
+        std::vector<SDL_Point> valid = get_real_valid_moves(p.get(), { p->x(), p->y() });
+
+        if (valid.size() > 0)
+            is_checkmate = false;
+    }
+
+    return is_checkmate;
+}
+
+
+std::vector<SDL_Point> core::get_real_valid_moves(Piece* piece, SDL_Point orig)
+{
+    std::vector<SDL_Point> valid = piece->get_valid_moves(m_pieces);
+
+    Piece* king = (piece->color() == Color::WHITE ? w_king : b_king);
+
+    for (int i = 0; i < valid.size(); ++i)
+    {
+        SDL_Point& point = valid[i];
+        ScopedMove move(piece, point.x, point.y, orig);
+
+        ScopedErase* erase = nullptr;
+
+        if (piece_at(point.x, point.y, piece))
+        {
+            ScopedErase* tmp = new ScopedErase(piece_at(point.x, point.y, piece), m_pieces);
+            erase = tmp;
+        }
+
+        if (check(king))
+        {
+            valid.erase(valid.begin() + i);
+            --i;
+        }
+
+        delete erase;
+    }
+
+    return valid;
 }

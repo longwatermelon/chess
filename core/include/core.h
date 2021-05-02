@@ -39,4 +39,7 @@ namespace core
     void find_kings();
 
     bool check(Piece* king);
+    bool checkmate(Piece* king);
+
+    std::vector<SDL_Point> get_real_valid_moves(Piece* piece, SDL_Point orig);
 }

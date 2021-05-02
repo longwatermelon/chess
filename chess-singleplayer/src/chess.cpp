@@ -10,7 +10,7 @@ void chess::mainloop()
         core::new_piece(PieceType::PAWN, Color::WHITE, i, 6);
     }
 
-    std::string format = "rkbKQbkr";
+    std::string format = "rkbQKbkr";
 
     for (int i = 0; i < format.size(); ++i)
     {
