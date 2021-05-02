@@ -48,7 +48,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                 if (p->contains(x, y) && p->color() == m_turn)
                 {
                     m_selected_piece = p.get();
-                    m_selected_piece_grid_orig = { p->x(), p->y() };
+                    m_selected_piece_grid_orig = { p->grid_x(), p->grid_y() };
                     m_valid_moves = utils::get_real_valid_moves(m_pieces, m_selected_piece, m_selected_piece_grid_orig);
 
                     break;
@@ -60,11 +60,11 @@ void core::handle_mouse(int px, int py, bool mouse_down)
     {
         if (m_selected_piece)
         {
-            if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->cx(), m_selected_piece->cy()))
+            if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->grid_cx(), m_selected_piece->grid_cy()))
             {
-                m_selected_piece->grid_move_to(m_selected_piece->cx(), m_selected_piece->cy());
+                m_selected_piece->grid_move_to(m_selected_piece->grid_cx(), m_selected_piece->grid_cy());
 
-                Piece* piece = utils::piece_at(m_pieces, m_selected_piece->x(), m_selected_piece->y(), m_selected_piece);
+                Piece* piece = utils::piece_at(m_pieces, m_selected_piece->grid_x(), m_selected_piece->grid_y(), m_selected_piece);
 
                 if (piece)
                 {

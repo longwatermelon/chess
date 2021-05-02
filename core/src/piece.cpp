@@ -70,20 +70,20 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
     {
         int dir = (m_color == Color::BLACK ? -1 : 1);
 
-        if (!utils::piece_at(pieces, x(), y() - 1 * dir))
-            valid.emplace_back(SDL_Point{ x(), y() - 1 * dir });
+        if (!utils::piece_at(pieces, grid_x(), grid_y() - 1 * dir))
+            valid.emplace_back(SDL_Point{ grid_x(), grid_y() - 1 * dir });
 
-        if ((m_color == Color::BLACK && y() == 1) || (m_color == Color::WHITE && y() == 6))
-            if (!utils::piece_at(pieces, x(), y() - 2 * dir))
-                valid.emplace_back(SDL_Point{ x(), y() - 2 * dir });
+        if ((m_color == Color::BLACK && grid_y() == 1) || (m_color == Color::WHITE && grid_y() == 6))
+            if (!utils::piece_at(pieces, grid_x(), grid_y() - 2 * dir))
+                valid.emplace_back(SDL_Point{ grid_x(), grid_y() - 2 * dir });
 
         for (int i = -1; i <= 1; i += 2)
         {
-            Piece* p = utils::piece_at(pieces, x() + i, y() - 1 * dir);
+            Piece* p = utils::piece_at(pieces, grid_x() + i, grid_y() - 1 * dir);
             
             if (p && p->color() != m_color)
             {
-                valid.emplace_back(SDL_Point{ x() + i, y() - 1 * dir });
+                valid.emplace_back(SDL_Point{ grid_x() + i, grid_y() - 1 * dir });
             }
         }
 
@@ -109,11 +109,11 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
     }
     case PieceType::KNIGHT:
     {
-        for (int i = y() - 2; i <= y() + 2; ++i)
+        for (int i = grid_y() - 2; i <= grid_y() + 2; ++i)
         {
-            for (int j = x() - 2; j <= x() + 2; ++j)
+            for (int j = grid_x() - 2; j <= grid_x() + 2; ++j)
             {
-                if (abs((j - x()) * (i - y())) == 2)
+                if (abs((j - grid_x()) * (i - grid_y())) == 2)
                 {
                     Piece* piece = utils::piece_at(pieces, j, i);
 
@@ -130,16 +130,16 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
     }
     case PieceType::KING:
     {
-        for (int i = y() - 1; i <= y() + 1; ++i)
+        for (int i = grid_y() - 1; i <= grid_y() + 1; ++i)
         {
-            for (int j = x() - 1; j <= x() + 1; ++j)
+            for (int j = grid_x() - 1; j <= grid_x() + 1; ++j)
             {
                 Piece* piece = utils::piece_at(pieces, j, i);
 
                 if (piece && piece->color() == m_color)
                     continue;
 
-                if (x() == j && y() == i)
+                if (grid_x() == j && grid_y() == i)
                     continue;
 
                 if (j >= 0 && j <= 7 && i >= 0 && i <= 7)
@@ -177,9 +177,9 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<
     {
         int upper = (ydir == 1 ? 8 : -1);
 
-        for (int i = y() + ydir; (upper < 0 ? i > upper : i < upper); i += ydir)
+        for (int i = grid_y() + ydir; (upper < 0 ? i > upper : i < upper); i += ydir)
         {
-            int current_x = x() + xdir * abs(y() - i);
+            int current_x = grid_x() + xdir * abs(grid_y() - i);
             int current_y = i;
 
             if (current_x < 0 || current_x > 7 || current_y < 0 || current_y > 7)
@@ -206,12 +206,12 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<
 
         if (ydir == 0)
         {
-            begin = x() + xdir;
+            begin = grid_x() + xdir;
             dir = xdir;
         }
         else
         {
-            begin = y() + ydir;
+            begin = grid_y() + ydir;
             dir = ydir;
             static_x = true;
         }
@@ -222,11 +222,11 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<
             if (static_x)
             {
                 oy = i;
-                ox = x();
+                ox = grid_x();
             }
             else
             {
-                oy = y();
+                oy = grid_y();
                 ox = i;
             }
 

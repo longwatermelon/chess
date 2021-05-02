@@ -39,11 +39,11 @@ public:
     PieceType type() const { return m_type; }
     Color color() const { return m_color; }
 
-    int x() const { return (m_rect.x - 100) / 100; }
-    int y() const { return (m_rect.y - 100) / 100; }
+    int grid_x() const { return (m_rect.x - 100) / 100; }
+    int grid_y() const { return (m_rect.y - 100) / 100; }
 
-    int cx() const { return (m_rect.x + 50 - 100) / 100; }
-    int cy() const { return (m_rect.y + 50 - 100) / 100; }
+    int grid_cx() const { return (m_rect.x + 50 - 100) / 100; }
+    int grid_cy() const { return (m_rect.y + 50 - 100) / 100; }
 
     int rect_x() const { return m_rect.x; }
     int rect_y() const { return m_rect.y; }

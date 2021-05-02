@@ -70,7 +70,7 @@ bool utils::is_valid_move(std::vector<std::unique_ptr<Piece>>& pieces, std::vect
 
     for (auto& p : valid)
     {
-        if (piece->cx() == p.x && piece->cy() == p.y)
+        if (piece->grid_cx() == p.x && piece->grid_cy() == p.y)
             is_valid = true;
     }
 
@@ -101,7 +101,7 @@ bool utils::check(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
 
         for (auto& m : p->get_valid_moves(pieces))
         {
-            if (m.x == king->x() && m.y == king->y())
+            if (m.x == king->grid_x() && m.y == king->grid_y())
                 in_check = true;
         }
     }
@@ -119,7 +119,7 @@ bool utils::checkmate(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
         if (p->color() != king->color())
             continue;
 
-        std::vector<SDL_Point> valid = get_real_valid_moves(pieces, p.get(), { p->x(), p->y() });
+        std::vector<SDL_Point> valid = get_real_valid_moves(pieces, p.get(), { p->grid_x(), p->grid_y() });
 
         if (valid.size() > 0)
             is_checkmate = false;
@@ -136,7 +136,7 @@ Piece* utils::piece_at(std::vector<std::unique_ptr<Piece>>& pieces, int grid_x, 
         if (p.get() == ignored)
             continue;
 
-        if (p->x() == grid_x && p->y() == grid_y)
+        if (p->grid_x() == grid_x && p->grid_y() == grid_y)
             return p.get();
     }
 
