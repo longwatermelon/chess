@@ -3,5 +3,5 @@
 
 namespace chess
 {
-	void mainloop();
+    void mainloop();
 }

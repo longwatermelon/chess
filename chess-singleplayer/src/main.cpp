@@ -4,7 +4,7 @@
 
 int main(int argc, char** argv)
 {
-	chess::mainloop();
+    chess::mainloop();
 
-	return 0;
+    return 0;
 }
