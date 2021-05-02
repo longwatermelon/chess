@@ -58,11 +58,21 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                         SDL_Point& point = m_valid_moves[i];
                         ScopedMove move(m_selected_piece, point.x, point.y, m_selected_piece_grid_orig);
 
+                        ScopedErase* erase = nullptr;
+
+                        if (piece_at(point.x, point.y, m_selected_piece))
+                        {
+                            ScopedErase* tmp = new ScopedErase(piece_at(point.x, point.y, m_selected_piece), m_pieces);
+                            erase = tmp;
+                        }
+
                         if (check(king))
                         {
                             m_valid_moves.erase(m_valid_moves.begin() + i);
                             --i;
                         }
+
+                        delete erase;
                     }
 
                     break;

@@ -12,3 +12,24 @@ ScopedMove::~ScopedMove()
 {
     m_piece->grid_move_to(m_orig_grid_point.x, m_orig_grid_point.y);
 }
+
+
+ScopedErase::ScopedErase(Piece* piece, std::vector<std::unique_ptr<Piece>>& pieces)
+    : m_pieces(pieces)
+{
+    for (int i = 0; i < pieces.size(); ++i)
+    {
+        if (pieces[i].get() == piece)
+        {
+            m_piece = std::move(pieces[i]);
+            pieces.erase(pieces.begin() + i);
+            break;
+        }
+    }
+}
+
+
+ScopedErase::~ScopedErase()
+{
+    m_pieces.emplace_back(std::move(m_piece));
+}
