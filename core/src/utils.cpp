@@ -155,3 +155,16 @@ void utils::eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece)
         }
     }
 }
+
+
+void utils::draw_text(Graphics* gfx, TTF_Font* font, const char* text, int x, int y)
+{
+    SDL_Surface* surf = TTF_RenderText_Solid(font, text, { 255, 255, 255 });
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(gfx->rend(), surf);
+
+    SDL_Rect tmp = { x, y, strlen(text) * 15, 30 };
+    SDL_RenderCopy(gfx->rend(), tex, 0, &tmp);
+
+    SDL_FreeSurface(surf);
+    SDL_DestroyTexture(tex);
+}

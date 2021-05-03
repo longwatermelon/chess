@@ -47,7 +47,7 @@ find_path(SDL2_TTF_INCLUDE
 )
 
 find_library(SDL2_TTF_LIB
-	NAMES SDL_ttf.lib
+	NAMES SDL2_ttf.lib
 	HINTS ENV{CMAKE_PREFIX_PATH}
 	PATH_SUFFIXES SDL2_ttf-2.0.15/lib/x64
 )

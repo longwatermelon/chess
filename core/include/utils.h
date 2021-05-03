@@ -1,5 +1,6 @@
 #pragma once
 #include "piece.h"
+#include <SDL_ttf.h>
 
 
 namespace utils
@@ -40,4 +41,6 @@ namespace utils
 
     Piece* piece_at(std::vector<std::unique_ptr<Piece>>& pieces, int grid_x, int grid_y, Piece* ignored = nullptr);
     void eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece);
+
+    void draw_text(Graphics* gfx, TTF_Font* font, const char* text, int x, int y);
 }

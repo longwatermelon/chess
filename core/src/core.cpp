@@ -2,6 +2,16 @@
 #include <iostream>
 
 
+void core::init()
+{
+    SDL_Init(SDL_INIT_VIDEO);
+    IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
+
+    m_font = TTF_OpenFont("assets/OpenSans-Regular.ttf", 100);
+}
+
+
 void core::draw_board()
 {
     bool draw_colored = true;
@@ -81,17 +91,11 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             m_valid_moves.clear();
             m_selected_piece = nullptr;
 
-            if (utils::check(m_pieces, utils::get_king(m_pieces, Color::WHITE)))
-                std::cout << "white is in check\n";
+            m_white_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::WHITE));
+            m_black_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::BLACK));
 
-            if (utils::check(m_pieces, utils::get_king(m_pieces, Color::BLACK)))
-                std::cout << "black is in check\n";
-
-            if (utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::WHITE)))
-                std::cout << "white is in checkmate, black wins\n";
-
-            if (utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::BLACK)))
-                std::cout << "black is in checkmate, white wins\n";
+            m_white_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::WHITE));
+            m_black_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::BLACK));
         }
     }
 }
@@ -148,6 +152,18 @@ void core::clear_and_draw()
 
     if (m_selected_piece)
         m_selected_piece->render(m_gfx.get());
+
+    if (m_white_check && !m_white_checkmate)
+        utils::draw_text(m_gfx.get(), m_font, "white is in check", 400, 950);
+
+    if (m_white_checkmate)
+        utils::draw_text(m_gfx.get(), m_font, "white is in checkmate", 340, 950);
+
+    if (m_black_check && !m_black_checkmate)
+        utils::draw_text(m_gfx.get(), m_font, "black is in check", 400, 50);
+
+    if (m_black_checkmate)
+        utils::draw_text(m_gfx.get(), m_font, "black is in checkmate", 340, 50);
 
     m_gfx->display();
 }

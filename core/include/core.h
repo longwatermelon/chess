@@ -17,6 +17,15 @@ namespace core
 
     inline Color m_turn{ Color::WHITE };
 
+    inline TTF_Font* m_font = nullptr;
+
+    inline bool m_white_check = false;
+    inline bool m_white_checkmate = false;
+    inline bool m_black_check = false;
+    inline bool m_black_checkmate = false;
+
+    void init();
+
     void draw_board();
 
     void handle_mouse(int px, int py, bool mouse_down);

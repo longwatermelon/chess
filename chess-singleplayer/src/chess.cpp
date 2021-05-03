@@ -4,6 +4,8 @@
 
 void chess::mainloop()
 {
+    core::init();
+
     for (int i = 0; i < 8; ++i)
     {
         core::new_piece(PieceType::PAWN, Color::BLACK, i, 1);
