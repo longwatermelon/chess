@@ -21,9 +21,9 @@ void core::draw_board()
             }
 
             if (draw_colored)
-                m_gfx->color({ 128, 0, 0 });
-            else
                 m_gfx->color({ 245, 222, 179 });
+            else
+                m_gfx->color({ 128, 0, 0 });
 
             SDL_Rect rect{ x * 100 + 100, y * 100 + 100, 100, 100 };
             SDL_RenderFillRect(m_gfx->rend(), &rect);

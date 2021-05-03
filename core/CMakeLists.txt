@@ -40,5 +40,28 @@ find_path(SDL2_IMAGE_INCLUDE
 	PATH_SUFFIXES SDL2_image-2.0.5/include
 )
 
-target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE})
-target_link_libraries(core PUBLIC ${SDL2_LIB} ${SDL2MAIN_LIB} ${SDL2_IMAGE_LIB})
+find_path(SDL2_TTF_INCLUDE
+	NAMES SDL_ttf.h
+	HINTS ENV{CMAKE_PREFIX_PATH}
+	PATH_SUFFIXES SDL2_ttf-2.0.15/include
+)
+
+find_library(SDL2_TTF_LIB
+	NAMES SDL_ttf.lib
+	HINTS ENV{CMAKE_PREFIX_PATH}
+	PATH_SUFFIXES SDL2_ttf-2.0.15/lib/x64
+)
+
+target_include_directories(core PUBLIC
+	${CMAKE_SOURCE_DIR}
+	${SDL2_INCLUDE_DIR}
+	${SDL2_IMAGE_INCLUDE}
+	${SDL2_TTF_INCLUDE}
+)
+
+target_link_libraries(core PUBLIC
+	${SDL2_LIB}
+	${SDL2MAIN_LIB}
+	${SDL2_IMAGE_LIB}
+	${SDL2_TTF_LIB}
+)
