@@ -1,7 +1,5 @@
 # chess
-singleplayer chess
-
-Planning on adding multiplayer chess next
+singleplayer and multiplayer chess
 
 assets from [here](https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master)
 
