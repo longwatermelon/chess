@@ -4,6 +4,8 @@
 
 void client::mainloop()
 {
+	bool running = true;
+
 	asio::error_code ec;
 
 	asio::io_service service;
@@ -19,6 +21,10 @@ void client::mainloop()
 		std::cout << "error: " << ec.message() << "\n";
 	else
 		std::cout << "connected successfully\n";
+
+	std::mutex mtx;
+
+	std::thread thr_recv(receive, std::ref(sock), std::ref(mtx), std::ref(running));
 
 
 	core::init();
@@ -50,7 +56,6 @@ void client::mainloop()
 		core::new_piece(type, Color::WHITE, i, 7);
 	}
 
-	bool running = true;
 	SDL_Event evt;
 
 	int prev_x, prev_y;
@@ -84,12 +89,30 @@ void client::mainloop()
 		core::clear_and_draw();
 	}
 
+	if (thr_recv.joinable()) thr_recv.join();
+
 	core::cleanup();
 }
 
 
 void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
 {
+	while (running)
+	{
+		if (sock.available() > 0)
+		{
+			std::vector<char> buf(sock.available());
+			sock.read_some(asio::buffer(buf.data(), buf.size()));
+
+			std::string data;
+			for (char c : buf)
+				data += c;
+
+			std::cout << "received: " << data << "\n";
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
 }
 
 

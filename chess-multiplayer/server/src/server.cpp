@@ -27,6 +27,7 @@ void server::receive(std::mutex& mtx)
 						data += c;
 
 					std::cout << "received: " << data << "\n";
+					broadcast(data, nullptr);
 				}
 			}
 		}
