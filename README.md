@@ -10,4 +10,6 @@ sdl2
 
 sdl2_image
 
+sdl2_ttf
+
 asio
