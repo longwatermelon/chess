@@ -16,14 +16,16 @@ using namespace asio::ip;
 
 namespace client
 {
-	void mainloop();
+    void mainloop();
 
-	void receive(tcp::socket& sock, std::mutex& mtx, bool& running);
+    void receive(tcp::socket& sock, std::mutex& mtx, bool& running);
 
-	void send(tcp::socket& sock, const std::string& msg);
+    void send(tcp::socket& sock, const std::string& msg);
 
-	void setup_board();
-	void connect_to_server(tcp::socket& sock, Color& color);
+    void setup_board();
+    bool connect_to_server(tcp::socket& sock, Color& color);
 
-	void handle_new_move(const std::string& data);
+    void handle_new_move(const std::string& data);
+
+    std::string sock_read(tcp::socket& sock);
 }

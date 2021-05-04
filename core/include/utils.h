@@ -3,7 +3,7 @@
 #include <SDL_ttf.h>
 
 
-namespace utils
+namespace core::utils
 {
     class ScopedMove
     {

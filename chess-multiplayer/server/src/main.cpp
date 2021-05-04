@@ -4,19 +4,19 @@
 
 int main(int argc, char** argv)
 {
-	asio::io_service service;
-	tcp::acceptor act(service, tcp::endpoint(tcp::v4(), 1234));
+    asio::io_service service;
+    tcp::acceptor act(service, tcp::endpoint(tcp::v4(), 1234));
 
-	std::mutex mtx;
+    std::mutex mtx;
 
-	std::string next_color = "white";
+    std::string next_color = "white";
 
-	std::thread thr_recv(server::receive, std::ref(mtx));
-	std::thread thr_act(server::accept_users, std::ref(mtx), std::ref(act), std::ref(service), std::ref(next_color));
+    std::thread thr_recv(server::receive, std::ref(mtx));
+    std::thread thr_act(server::accept_users, std::ref(mtx), std::ref(act), std::ref(service), std::ref(next_color));
 
-	std::cout << "server is running\n";
+    std::cout << "server is running\n";
 
-	while (true);
+    while (true);
 
-	return 0;
+    return 0;
 }

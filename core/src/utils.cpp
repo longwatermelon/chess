@@ -1,20 +1,20 @@
 #include "../include/utils.h"
 
 
-utils::ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy, SDL_Point orig_point)
+core::utils::ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy, SDL_Point orig_point)
     : m_piece(piece), m_orig_grid_point(orig_point)
 {
     piece->grid_move_to(gridx, gridy);
 }
 
 
-utils::ScopedMove::~ScopedMove()
+core::utils::ScopedMove::~ScopedMove()
 {
     m_piece->grid_move_to(m_orig_grid_point.x, m_orig_grid_point.y);
 }
 
 
-utils::ScopedErase::ScopedErase(Piece* piece, std::vector<std::unique_ptr<Piece>>& pieces)
+core::utils::ScopedErase::ScopedErase(Piece* piece, std::vector<std::unique_ptr<Piece>>& pieces)
     : m_pieces(pieces)
 {
     for (int i = 0; i < pieces.size(); ++i)
@@ -29,13 +29,13 @@ utils::ScopedErase::ScopedErase(Piece* piece, std::vector<std::unique_ptr<Piece>
 }
 
 
-utils::ScopedErase::~ScopedErase()
+core::utils::ScopedErase::~ScopedErase()
 {
     m_pieces.emplace_back(std::move(m_piece));
 }
 
 
-std::vector<SDL_Point> utils::get_real_valid_moves(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece, SDL_Point orig)
+std::vector<SDL_Point> core::utils::get_real_valid_moves(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece, SDL_Point orig)
 {
     std::vector<SDL_Point> valid = piece->get_valid_moves(pieces);
 
@@ -64,7 +64,7 @@ std::vector<SDL_Point> utils::get_real_valid_moves(std::vector<std::unique_ptr<P
 }
 
 
-bool utils::is_valid_move(std::vector<std::unique_ptr<Piece>>& pieces, std::vector<SDL_Point>& valid, Piece* piece, int grid_x, int grid_y)
+bool core::utils::is_valid_move(std::vector<std::unique_ptr<Piece>>& pieces, std::vector<SDL_Point>& valid, Piece* piece, int grid_x, int grid_y)
 {
     bool is_valid = false;
 
@@ -78,7 +78,7 @@ bool utils::is_valid_move(std::vector<std::unique_ptr<Piece>>& pieces, std::vect
 }
 
 
-Piece* utils::get_king(std::vector<std::unique_ptr<Piece>>& pieces, Color color)
+Piece* core::utils::get_king(std::vector<std::unique_ptr<Piece>>& pieces, Color color)
 {
     for (auto& p : pieces)
     {
@@ -90,7 +90,7 @@ Piece* utils::get_king(std::vector<std::unique_ptr<Piece>>& pieces, Color color)
 }
 
 
-bool utils::check(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
+bool core::utils::check(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
 {
     bool in_check = false;
 
@@ -110,7 +110,7 @@ bool utils::check(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
 }
 
 
-bool utils::checkmate(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
+bool core::utils::checkmate(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
 {
     bool is_checkmate = true;
 
@@ -129,7 +129,7 @@ bool utils::checkmate(std::vector<std::unique_ptr<Piece>>& pieces, Piece* king)
 }
 
 
-Piece* utils::piece_at(std::vector<std::unique_ptr<Piece>>& pieces, int grid_x, int grid_y, Piece* ignored)
+Piece* core::utils::piece_at(std::vector<std::unique_ptr<Piece>>& pieces, int grid_x, int grid_y, Piece* ignored)
 {
     for (auto& p : pieces)
     {
@@ -144,7 +144,7 @@ Piece* utils::piece_at(std::vector<std::unique_ptr<Piece>>& pieces, int grid_x, 
 }
 
 
-void utils::eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece)
+void core::utils::eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece)
 {
     for (int i = 0; i < pieces.size(); ++i)
     {
@@ -157,7 +157,7 @@ void utils::eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece)
 }
 
 
-void utils::draw_text(Graphics* gfx, TTF_Font* font, const char* text, int x, int y)
+void core::utils::draw_text(Graphics* gfx, TTF_Font* font, const char* text, int x, int y)
 {
     SDL_Surface* surf = TTF_RenderText_Solid(font, text, { 255, 255, 255 });
     SDL_Texture* tex = SDL_CreateTextureFromSurface(gfx->rend(), surf);

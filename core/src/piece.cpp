@@ -70,16 +70,16 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
     {
         int dir = (m_color == Color::BLACK ? -1 : 1);
 
-        if (!utils::piece_at(pieces, grid_x(), grid_y() - 1 * dir))
+        if (!core::utils::piece_at(pieces, grid_x(), grid_y() - 1 * dir))
             valid.emplace_back(SDL_Point{ grid_x(), grid_y() - 1 * dir });
 
         if ((m_color == Color::BLACK && grid_y() == 1) || (m_color == Color::WHITE && grid_y() == 6))
-            if (!utils::piece_at(pieces, grid_x(), grid_y() - 2 * dir))
+            if (!core::utils::piece_at(pieces, grid_x(), grid_y() - 2 * dir))
                 valid.emplace_back(SDL_Point{ grid_x(), grid_y() - 2 * dir });
 
         for (int i = -1; i <= 1; i += 2)
         {
-            Piece* p = utils::piece_at(pieces, grid_x() + i, grid_y() - 1 * dir);
+            Piece* p = core::utils::piece_at(pieces, grid_x() + i, grid_y() - 1 * dir);
             
             if (p && p->color() != m_color)
             {
@@ -115,7 +115,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
             {
                 if (abs((j - grid_x()) * (i - grid_y())) == 2)
                 {
-                    Piece* piece = utils::piece_at(pieces, j, i);
+                    Piece* piece = core::utils::piece_at(pieces, j, i);
 
                     if (piece && piece->color() == m_color)
                         continue;
@@ -134,7 +134,7 @@ std::vector<SDL_Point> Piece::get_valid_moves(std::vector<std::unique_ptr<Piece>
         {
             for (int j = grid_x() - 1; j <= grid_x() + 1; ++j)
             {
-                Piece* piece = utils::piece_at(pieces, j, i);
+                Piece* piece = core::utils::piece_at(pieces, j, i);
 
                 if (piece && piece->color() == m_color)
                     continue;
@@ -185,13 +185,13 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<
             if (current_x < 0 || current_x > 7 || current_y < 0 || current_y > 7)
                 continue;
 
-            if (!utils::piece_at(pieces, current_x, current_y) && !blocked)
+            if (!core::utils::piece_at(pieces, current_x, current_y) && !blocked)
             {
                 valid.emplace_back(SDL_Point{ current_x, current_y });
             }
             else
             {
-                if (!blocked && utils::piece_at(pieces, current_x, current_y)->color() != m_color)
+                if (!blocked && core::utils::piece_at(pieces, current_x, current_y)->color() != m_color)
                     valid.emplace_back(SDL_Point{ current_x, current_y });
 
                 blocked = true;
@@ -230,11 +230,11 @@ void Piece::scan(int xdir, int ydir, std::vector<SDL_Point>& valid, std::vector<
                 ox = i;
             }
 
-            if (!utils::piece_at(pieces, ox, oy) && !blocked)
+            if (!core::utils::piece_at(pieces, ox, oy) && !blocked)
                 valid.emplace_back(SDL_Point{ ox, oy });
             else
             {
-                if (!blocked && utils::piece_at(pieces, ox, oy)->color() != m_color)
+                if (!blocked && core::utils::piece_at(pieces, ox, oy)->color() != m_color)
                     valid.emplace_back(SDL_Point{ ox, oy });
 
                 blocked = true;

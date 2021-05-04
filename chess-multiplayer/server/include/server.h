@@ -16,13 +16,13 @@ using namespace asio::ip;
 
 namespace server
 {
-	inline std::vector<std::unique_ptr<tcp::socket>> m_users;
+    inline std::vector<std::unique_ptr<tcp::socket>> m_users;
 
-	void receive(std::mutex& mtx);
+    void receive(std::mutex& mtx);
 
-	void send(tcp::socket& sock, const std::string& msg);
+    void send(tcp::socket& sock, const std::string& msg);
 
-	void broadcast(const std::string& msg, tcp::socket* ignored);
+    void broadcast(const std::string& msg, tcp::socket* ignored = nullptr);
 
-	void accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service, std::string& next_color);
+    void accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service, std::string& next_color);
 }
