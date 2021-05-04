@@ -32,7 +32,12 @@ namespace core
     void handle_mouse(int px, int py, bool mouse_down);
 
     void piece_follow_cursor(int px, int py);
+
     void new_piece(PieceType type, Color color, int gridx, int gridy);
+    Piece* piece_at(int x, int y);
+    void remove_piece(Piece* piece);
+
+    void check_kings();
 
     void clear_and_draw();
 
@@ -46,5 +51,7 @@ namespace core
         std::string get_new_changes();
 
         std::string get_elem_from_string(const std::string& data, const std::string& elem);
+
+        
     }
 }

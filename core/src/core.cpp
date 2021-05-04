@@ -72,8 +72,6 @@ void core::handle_mouse(int px, int py, bool mouse_down)
     {
         if (m_selected_piece)
         {
-            
-
             if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->grid_cx(), m_selected_piece->grid_cy()))
             {
                 multiplayer::m_newest_change = "type=new-move&";
@@ -101,11 +99,7 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             m_valid_moves.clear();
             m_selected_piece = nullptr;
 
-            m_white_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::WHITE));
-            m_black_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::BLACK));
-
-            m_white_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::WHITE));
-            m_black_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::BLACK));
+            check_kings();
         }
     }
 }
@@ -126,6 +120,28 @@ void core::piece_follow_cursor(int px, int py)
 void core::new_piece(PieceType type, Color color, int gridx, int gridy)
 {
     m_pieces.emplace_back(std::make_unique<Piece>(type, color, gridx, gridy, m_gfx.get()));
+}
+
+
+Piece* core::piece_at(int x, int y)
+{
+    return utils::piece_at(m_pieces, x, y);
+}
+
+
+void core::remove_piece(Piece* piece)
+{
+    utils::eat_piece(m_pieces, piece);
+}
+
+
+void core::check_kings()
+{
+    m_white_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::WHITE));
+    m_black_check = utils::check(m_pieces, utils::get_king(m_pieces, Color::BLACK));
+
+    m_white_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::WHITE));
+    m_black_checkmate = utils::checkmate(m_pieces, utils::get_king(m_pieces, Color::BLACK));
 }
 
 

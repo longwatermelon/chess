@@ -6,8 +6,6 @@ void client::mainloop()
 {
 	bool running = true;
 
-	asio::error_code ec;
-
 	asio::io_service service;
 	tcp::socket sock(service);
 
@@ -18,7 +16,6 @@ void client::mainloop()
 	std::thread thr_recv(receive, std::ref(sock), std::ref(mtx), std::ref(running));
 
 	core::init();
-
 	setup_board();
 
 	SDL_Event evt;
@@ -82,15 +79,7 @@ void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
 			std::string type = core::multiplayer::get_elem_from_string(data, "type");
 
 			if (type == "new-move")
-			{
-				core::m_turn = (core::m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
-
-				switch (core::m_turn)
-				{
-				case Color::BLACK: std::cout << "changed turn from white to black\n"; break;
-				case Color::WHITE: std::cout << "changed turn from black to white\n"; break;
-				}
-			}
+				handle_new_move(data);
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -166,4 +155,37 @@ void client::connect_to_server(tcp::socket& sock, Color& color)
 
 	std::cout << "received response\n";
 	std::cout << "your color is " << core::multiplayer::get_elem_from_string(data, "color") << "\n";
+}
+
+
+void client::handle_new_move(const std::string& data)
+{
+	core::m_turn = (core::m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
+
+	switch (core::m_turn)
+	{
+	case Color::BLACK: std::cout << "changed turn from white to black\n"; break;
+	case Color::WHITE: std::cout << "changed turn from black to white\n"; break;
+	}
+
+
+	SDL_Point orig = {
+		std::stoi(core::multiplayer::get_elem_from_string(data, "px")),
+		std::stoi(core::multiplayer::get_elem_from_string(data, "py"))
+	};
+
+	SDL_Point curr = {
+		std::stoi(core::multiplayer::get_elem_from_string(data, "x")),
+		std::stoi(core::multiplayer::get_elem_from_string(data, "y"))
+	};
+
+	Piece* p = core::piece_at(orig.x, orig.y);
+	Piece* eaten = core::piece_at(curr.x, curr.y);
+
+	if (eaten)
+		core::remove_piece(eaten);
+
+	p->grid_move_to(curr.x, curr.y);
+
+	core::check_kings();
 }

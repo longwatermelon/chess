@@ -24,4 +24,6 @@ namespace client
 
 	void setup_board();
 	void connect_to_server(tcp::socket& sock, Color& color);
+
+	void handle_new_move(const std::string& data);
 }
