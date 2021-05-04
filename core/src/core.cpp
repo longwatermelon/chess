@@ -70,6 +70,9 @@ void core::handle_mouse(int px, int py, bool mouse_down)
     {
         if (m_selected_piece)
         {
+            multiplayer::m_newest_change = "type=new_move&";
+            multiplayer::m_newest_change += "px=" + std::to_string(m_selected_piece_grid_orig.x) + "&py=" + std::to_string(m_selected_piece_grid_orig.y) + "&";
+
             if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->grid_cx(), m_selected_piece->grid_cy()))
             {
                 m_selected_piece->grid_move_to(m_selected_piece->grid_cx(), m_selected_piece->grid_cy());
@@ -87,6 +90,8 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             {
                 m_selected_piece->grid_move_to(m_selected_piece_grid_orig.x, m_selected_piece_grid_orig.y);
             }
+
+            multiplayer::m_newest_change += "x=" + std::to_string(m_selected_piece->grid_x()) + "&y=" + std::to_string(m_selected_piece->grid_y());
 
             m_valid_moves.clear();
             m_selected_piece = nullptr;
@@ -177,4 +182,13 @@ void core::cleanup()
     }
 
     m_gfx.reset();
+}
+
+
+std::string core::multiplayer::get_new_changes()
+{
+    std::string tmp = m_newest_change;
+    m_newest_change.clear();
+
+    return tmp;
 }

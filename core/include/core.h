@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <memory>
 #include <vector>
+#include <string>
 
 
 namespace core
@@ -36,4 +37,12 @@ namespace core
     void clear_and_draw();
 
     void cleanup();
+
+
+    namespace multiplayer
+    {
+        inline std::string m_newest_change;
+
+        std::string get_new_changes();
+    }
 }

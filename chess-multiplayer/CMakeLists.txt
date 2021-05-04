@@ -9,5 +9,5 @@ find_path(ASIO_INCLUDE
 add_subdirectory(client)
 add_subdirectory(server)
 
-target_include_directories(client PRIVATE ASIO_INCLUDE)
-target_include_directories(server PRIVATE ASIO_INCLUDE)
+target_include_directories(client PRIVATE ${ASIO_INCLUDE})
+target_include_directories(server PRIVATE ${ASIO_INCLUDE})
