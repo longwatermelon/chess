@@ -10,6 +10,8 @@ void core::init()
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 
+    m_gfx = std::make_unique<Graphics>("chess");
+
     m_font = TTF_OpenFont("assets/OpenSans-Regular.ttf", 100);
 }
 

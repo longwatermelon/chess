@@ -8,7 +8,7 @@
 
 namespace core
 {
-    inline std::unique_ptr<Graphics> m_gfx{ std::make_unique<Graphics>("chess") };
+    inline std::unique_ptr<Graphics> m_gfx;
     inline std::vector<std::unique_ptr<Piece>> m_pieces;
 
     inline Piece* m_selected_piece{ nullptr };
