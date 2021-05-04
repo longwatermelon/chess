@@ -8,3 +8,4 @@ project(chess)
 
 add_subdirectory(core)
 add_subdirectory(chess-singleplayer)
+add_subdirectory(chess-multiplayer)
