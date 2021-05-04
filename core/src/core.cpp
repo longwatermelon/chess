@@ -1,5 +1,7 @@
 #include "../include/core.h"
 #include <iostream>
+#include <sstream>
+#include <algorithm>
 
 
 void core::init()
@@ -70,11 +72,13 @@ void core::handle_mouse(int px, int py, bool mouse_down)
     {
         if (m_selected_piece)
         {
-            multiplayer::m_newest_change = "type=new_move&";
-            multiplayer::m_newest_change += "px=" + std::to_string(m_selected_piece_grid_orig.x) + "&py=" + std::to_string(m_selected_piece_grid_orig.y) + "&";
+            
 
             if (utils::is_valid_move(m_pieces, m_valid_moves, m_selected_piece, m_selected_piece->grid_cx(), m_selected_piece->grid_cy()))
             {
+                multiplayer::m_newest_change = "type=new-move&";
+                multiplayer::m_newest_change += "px=" + std::to_string(m_selected_piece_grid_orig.x) + "&py=" + std::to_string(m_selected_piece_grid_orig.y) + "&";
+
                 m_selected_piece->grid_move_to(m_selected_piece->grid_cx(), m_selected_piece->grid_cy());
 
                 Piece* piece = utils::piece_at(m_pieces, m_selected_piece->grid_x(), m_selected_piece->grid_y(), m_selected_piece);
@@ -85,13 +89,14 @@ void core::handle_mouse(int px, int py, bool mouse_down)
                 }
 
                 m_turn = (m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
+
+                multiplayer::m_newest_change += "x=" + std::to_string(m_selected_piece->grid_x()) + "&y=" + std::to_string(m_selected_piece->grid_y());
             }
             else
             {
                 m_selected_piece->grid_move_to(m_selected_piece_grid_orig.x, m_selected_piece_grid_orig.y);
             }
 
-            multiplayer::m_newest_change += "x=" + std::to_string(m_selected_piece->grid_x()) + "&y=" + std::to_string(m_selected_piece->grid_y());
 
             m_valid_moves.clear();
             m_selected_piece = nullptr;
@@ -191,4 +196,29 @@ std::string core::multiplayer::get_new_changes()
     m_newest_change.clear();
 
     return tmp;
+}
+
+
+std::string core::multiplayer::get_elem_from_string(const std::string& data, const std::string& elem)
+{
+    std::vector<std::string> data_list;
+
+    std::stringstream ss(data);
+    std::string pair;
+    while (std::getline(ss, pair, '&')) data_list.emplace_back(pair);
+
+    for (auto& str : data_list)
+    {
+        std::stringstream tmp(str);
+        std::string key;
+        std::getline(tmp, key, '=');
+
+        std::string value;
+        std::getline(tmp, value);
+
+        if (key == elem)
+            return value;
+    }
+
+    return "";
 }

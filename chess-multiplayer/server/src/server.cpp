@@ -27,7 +27,7 @@ void server::receive(std::mutex& mtx)
 						data += c;
 
 					std::cout << "received: " << data << "\n";
-					broadcast(data, nullptr);
+					broadcast(data, m_users[i].get());
 				}
 			}
 		}
@@ -55,7 +55,7 @@ void server::broadcast(const std::string& msg, tcp::socket* ignored)
 }
 
 
-void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service)
+void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service, std::string& next_color)
 {
 	while (true)
 	{
@@ -72,7 +72,12 @@ void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service&
 
 		{
 			std::lock_guard lock(mtx);
+			send(*sock, "type=new-connect&color=" + next_color);
 			m_users.emplace_back(std::move(sock));
+			
+
+			if (next_color == "white")
+				next_color = "black";
 		}
 	}
 }

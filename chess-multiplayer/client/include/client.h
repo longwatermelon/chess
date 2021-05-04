@@ -21,4 +21,7 @@ namespace client
 	void receive(tcp::socket& sock, std::mutex& mtx, bool& running);
 
 	void send(tcp::socket& sock, const std::string& msg);
+
+	void setup_board();
+	void connect_to_server(tcp::socket& sock, Color& color);
 }

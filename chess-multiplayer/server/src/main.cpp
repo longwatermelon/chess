@@ -9,8 +9,10 @@ int main(int argc, char** argv)
 
 	std::mutex mtx;
 
+	std::string next_color = "white";
+
 	std::thread thr_recv(server::receive, std::ref(mtx));
-	std::thread thr_act(server::accept_users, std::ref(mtx), std::ref(act), std::ref(service));
+	std::thread thr_act(server::accept_users, std::ref(mtx), std::ref(act), std::ref(service), std::ref(next_color));
 
 	std::cout << "server is running\n";
 

@@ -24,5 +24,5 @@ namespace server
 
 	void broadcast(const std::string& msg, tcp::socket* ignored);
 
-	void accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service);
+	void accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service& service, std::string& next_color);
 }

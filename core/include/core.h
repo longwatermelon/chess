@@ -44,5 +44,7 @@ namespace core
         inline std::string m_newest_change;
 
         std::string get_new_changes();
+
+        std::string get_elem_from_string(const std::string& data, const std::string& elem);
     }
 }
