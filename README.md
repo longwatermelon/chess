@@ -9,3 +9,5 @@ assets from [here](https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/
 sdl2
 
 sdl2_image
+
+asio
