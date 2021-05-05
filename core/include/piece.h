@@ -26,7 +26,7 @@ class Piece
 public:
     Piece(PieceType type, Color color, int x, int y, Graphics* gfx);
 
-    void render(Graphics* gfx);
+    void render(Graphics* gfx, bool flipped);
 
     bool contains(int x, int y);
     void move(int x, int y);

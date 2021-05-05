@@ -48,7 +48,7 @@ void core::draw_board()
 }
 
 
-void core::handle_mouse(int px, int py, bool mouse_down)
+void core::handle_mouse(int px, int py, bool mouse_down, bool flipped)
 {
     if (mouse_down)
     {
@@ -58,6 +58,13 @@ void core::handle_mouse(int px, int py, bool mouse_down)
             {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
+
+                if (flipped)
+                {
+                    SDL_Point tmp = utils::flip_coords({ x, y });
+                    x = tmp.x;
+                    y = tmp.y;
+                }
 
                 if (p->contains(x, y) && p->color() == m_turn)
                 {
@@ -107,10 +114,17 @@ void core::handle_mouse(int px, int py, bool mouse_down)
 }
 
 
-void core::piece_follow_cursor(int px, int py)
+void core::piece_follow_cursor(int px, int py, bool flipped)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
+
+    if (flipped)
+    {
+        SDL_Point tmp = utils::flip_coords({ x, y });
+        x = tmp.x;
+        y = tmp.y;
+    }
 
     if (m_selected_piece)
     {
@@ -147,7 +161,7 @@ void core::check_kings()
 }
 
 
-void core::clear_and_draw()
+void core::clear_and_draw(bool flipped)
 {
     m_gfx->clear();
 
@@ -161,7 +175,14 @@ void core::clear_and_draw()
         {
             SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_BLEND);
 
-            SDL_Rect rect{ p.x * 100 + 100, p.y * 100 + 100, 100, 100 };
+            SDL_Point tmp;
+
+            if (flipped)
+                tmp = utils::flip_coords({ p.x * 100 + 200, p.y * 100 + 200 });
+            else
+                tmp = { p.x * 100 + 100, p.y * 100 + 100 };
+
+            SDL_Rect rect{ tmp.x, tmp.y, 100, 100 };
             SDL_RenderFillRect(m_gfx->rend(), &rect);
 
             SDL_SetRenderDrawBlendMode(m_gfx->rend(), SDL_BLENDMODE_NONE);
@@ -175,11 +196,11 @@ void core::clear_and_draw()
         if (piece.get() == m_selected_piece)
             continue; // selected piece will always be on the top layer if drawn last
 
-        piece->render(m_gfx.get());
+        piece->render(m_gfx.get(), flipped);
     }
 
     if (m_selected_piece)
-        m_selected_piece->render(m_gfx.get());
+        m_selected_piece->render(m_gfx.get(), flipped);
 
     if (m_white_check && !m_white_checkmate)
         utils::draw_text(m_gfx.get(), m_font, "white is in check", 400, 950);

@@ -168,3 +168,9 @@ void core::utils::draw_text(Graphics* gfx, TTF_Font* font, const char* text, int
     SDL_FreeSurface(surf);
     SDL_DestroyTexture(tex);
 }
+
+
+SDL_Point core::utils::flip_coords(SDL_Point p)
+{
+    return { 1000 - p.x, 1000 - p.y };
+}

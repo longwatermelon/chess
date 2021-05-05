@@ -49,19 +49,19 @@ void chess::mainloop()
                 running = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                core::handle_mouse(prev_x, prev_y, true);
+                core::handle_mouse(prev_x, prev_y, true, false);
                 break;
             case SDL_MOUSEBUTTONUP:
-                core::handle_mouse(prev_x, prev_y, false);
+                core::handle_mouse(prev_x, prev_y, false, false);
                 break;
             }
         }
 
-        core::piece_follow_cursor(prev_x, prev_y);
+        core::piece_follow_cursor(prev_x, prev_y, false);
 
         SDL_GetMouseState(&prev_x, &prev_y);
 
-        core::clear_and_draw();
+        core::clear_and_draw(false);
     }
 
     core::cleanup();

@@ -1,6 +1,7 @@
 #include "../include/piece.h"
 #include "../include/utils.h"
 #include <string>
+#include <iostream>
 
 
 Piece::Piece(PieceType type, Color color, int x, int y, Graphics* gfx)
@@ -31,9 +32,21 @@ Piece::Piece(PieceType type, Color color, int x, int y, Graphics* gfx)
 }
 
 
-void Piece::render(Graphics* gfx)
+void Piece::render(Graphics* gfx, bool flipped)
 {
-    SDL_RenderCopy(gfx->rend(), m_texture, NULL, &m_rect);
+    SDL_Rect rect;
+
+    if (flipped)
+    {
+        SDL_Point tmp = core::utils::flip_coords({ m_rect.x, m_rect.y });
+        rect = { tmp.x - 100, tmp.y - 100, m_rect.w, m_rect.h };
+    }
+    else
+    {
+        rect = m_rect;
+    }
+
+    SDL_RenderCopy(gfx->rend(), m_texture, NULL, &rect);
 }
 
 

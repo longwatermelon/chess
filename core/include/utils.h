@@ -43,4 +43,6 @@ namespace core::utils
     void eat_piece(std::vector<std::unique_ptr<Piece>>& pieces, Piece* piece);
 
     void draw_text(Graphics* gfx, TTF_Font* font, const char* text, int x, int y);
+
+    SDL_Point flip_coords(SDL_Point p);
 }

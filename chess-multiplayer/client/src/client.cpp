@@ -58,11 +58,20 @@ void client::mainloop()
         SDL_RenderPresent(core::m_gfx->rend());
     }
 
+    bool flipped = (my_color == Color::WHITE ? false : true);
+
     std::thread thr_recv(receive, std::ref(sock), std::ref(mtx), std::ref(running));
     setup_board();
 
     int prev_x, prev_y;
     SDL_GetMouseState(&prev_x, &prev_y);
+
+    if (flipped)
+    {
+        SDL_Point tmp = core::utils::flip_coords({ prev_x, prev_y });
+        prev_x = tmp.x;
+        prev_y = tmp.y;
+    }
 
     while (running)
     {
@@ -75,12 +84,12 @@ void client::mainloop()
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (core::m_turn == my_color)
-                    core::handle_mouse(prev_x, prev_y, true);
+                    core::handle_mouse(prev_x, prev_y, true, flipped);
 
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (core::m_turn == my_color)
-                    core::handle_mouse(prev_x, prev_y, false);
+                    core::handle_mouse(prev_x, prev_y, false, flipped);
 
                 break;
             }
@@ -89,11 +98,18 @@ void client::mainloop()
         std::string newest_change = core::multiplayer::get_new_changes();
         send(sock, newest_change);
 
-        core::piece_follow_cursor(prev_x, prev_y);
+        core::piece_follow_cursor(prev_x, prev_y, flipped);
 
         SDL_GetMouseState(&prev_x, &prev_y);
 
-        core::clear_and_draw();
+        if (flipped)
+        {
+            SDL_Point tmp = core::utils::flip_coords({ prev_x, prev_y });
+            prev_x = tmp.x;
+            prev_y = tmp.y;
+        }
+
+        core::clear_and_draw(flipped);
     }
 
     if (thr_recv.joinable()) thr_recv.join();
