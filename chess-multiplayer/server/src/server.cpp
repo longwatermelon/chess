@@ -13,14 +13,14 @@ void server::receive(std::mutex& mtx)
 
             for (int i = 0; i < m_users.size(); ++i)
             {
-                size_t bytes = m_users[i]->sock()->available();
+                size_t bytes = m_users[i].get()->available();
 
                 if (bytes > 0)
                 {
                     std::cout << "read " << bytes << " bytes\n";
 
                     std::vector<char> buf(bytes);
-                    m_users[i]->sock()->read_some(asio::buffer(buf.data(), buf.size()));
+                    m_users[i].get()->read_some(asio::buffer(buf.data(), buf.size()));
 
                     std::string data;
                     for (char c : buf)
@@ -28,10 +28,7 @@ void server::receive(std::mutex& mtx)
 
                     std::cout << "received: " << data << "\n";
 
-                    if (data == "ready")
-                        m_users[i]->set_ready(true);
-                    else
-                        broadcast(data, m_users[i]->sock());
+                    broadcast(data, m_users[i].get());
                 }
             }
         }
@@ -49,12 +46,12 @@ void server::send(tcp::socket& sock, const std::string& msg)
 
 void server::broadcast(const std::string& msg, tcp::socket* ignored)
 {
-    for (auto& user : m_users)
+    for (auto& sock : m_users)
     {
-        if (user->sock() == ignored)
+        if (sock.get() == ignored)
             continue;
 
-        send(*(user->sock()), msg);
+        send(*sock.get(), msg);
     }
 }
 
@@ -69,34 +66,27 @@ void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service&
         {
             std::cout << "found 2 users, starting game\n";
 
-            for (auto& user : m_users)
-            {
-                while (!user->ready())
-                    ;
-
-                send(*(user->sock()), "type=game-start");
-
-                std::cout << "started socket " << user->sock() << "\n";
-            }
+            // m_users[0] is white
+            send(*m_users[0].get(), "type=game-start");
+            std::cout << "started game\n";
         }
 
         std::unique_ptr<tcp::socket> sock = std::make_unique<tcp::socket>(service);
-        std::unique_ptr<User> user = std::make_unique<User>(std::move(sock), false);
 
         std::cout << "listening for new users\n";
-        act.accept(*(user->sock()));
+        act.accept(*sock.get());
         
         {
             std::lock_guard lock(mtx);
 
             if (full_game)
             {
-                send(*(user->sock()), "type=error&message=already two players in game");
+                send(*sock.get(), "type=error&message=already two players in game");
                 continue;
             }
 
-            send(*(user->sock()), "type=new-connect&color=" + next_color);
-            m_users.emplace_back(std::move(user));
+            send(*sock.get(), "type=new-connect&color=" + next_color);
+            m_users.emplace_back(std::move(sock));
             
             std::cout << "current user count: " << m_users.size() << "\n";
 

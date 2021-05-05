@@ -23,10 +23,11 @@ void client::mainloop()
     SDL_Event evt;
 
     SDL_SetWindowTitle(core::m_gfx->window(), (std::string("chess | ") + (my_color == Color::WHITE ? "white" : "black")).c_str());
-    send(sock, "ready");
-
 
     bool waiting = true;
+
+    if (my_color == Color::BLACK)
+        waiting = false;
 
     while (waiting)
     {
