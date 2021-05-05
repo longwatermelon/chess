@@ -203,16 +203,16 @@ void core::clear_and_draw(bool flipped)
         m_selected_piece->render(m_gfx.get(), flipped);
 
     if (m_white_check && !m_white_checkmate)
-        utils::draw_text(m_gfx.get(), m_font, "white is in check", 400, 950);
+        utils::draw_text(m_gfx.get(), m_font, "CHECK", 463, flipped ? 50 : 950);
 
     if (m_white_checkmate)
-        utils::draw_text(m_gfx.get(), m_font, "white is in checkmate", 340, 950);
+        utils::draw_text(m_gfx.get(), m_font, "CHECKMATE", 432, flipped ? 50 : 950);
 
     if (m_black_check && !m_black_checkmate)
-        utils::draw_text(m_gfx.get(), m_font, "black is in check", 400, 50);
+        utils::draw_text(m_gfx.get(), m_font, "CHECK", 463, flipped ? 950 : 50);
 
     if (m_black_checkmate)
-        utils::draw_text(m_gfx.get(), m_font, "black is in checkmate", 340, 50);
+        utils::draw_text(m_gfx.get(), m_font, "CHECKMATE", 432, flipped ? 950 : 50);
 
     m_gfx->display();
 }
