@@ -23,6 +23,8 @@ void client::mainloop()
     SDL_Event evt;
 
     SDL_SetWindowTitle(core::m_gfx->window(), (std::string("chess | ") + (my_color == Color::WHITE ? "white" : "black")).c_str());
+    send(sock, "ready");
+
 
     bool waiting = true;
 
@@ -106,8 +108,6 @@ void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
         if (sock.available() > 0)
         {
             std::string data = sock_read(sock);
-
-            std::cout << "received " << data.size() << " bytes\n";
 
             std::string type = core::multiplayer::get_elem_from_string(data, "type");
 
@@ -202,13 +202,6 @@ bool client::connect_to_server(tcp::socket& sock, Color& color)
 void client::handle_new_move(const std::string& data)
 {
     core::m_turn = (core::m_turn == Color::BLACK ? Color::WHITE : Color::BLACK);
-
-    switch (core::m_turn)
-    {
-    case Color::BLACK: std::cout << "changed turn from white to black\n"; break;
-    case Color::WHITE: std::cout << "changed turn from black to white\n"; break;
-    }
-
 
     SDL_Point orig = {
         std::stoi(core::multiplayer::get_elem_from_string(data, "px")),

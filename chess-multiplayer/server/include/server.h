@@ -16,7 +16,23 @@ using namespace asio::ip;
 
 namespace server
 {
-    inline std::vector<std::unique_ptr<tcp::socket>> m_users;
+    class User
+    {
+    public:
+        User(std::unique_ptr<tcp::socket> socket, bool ready)
+            : m_sock(std::move(socket)), m_ready(ready) {}
+
+        tcp::socket* sock() const { return m_sock.get(); }
+        bool ready() const { return m_ready; }
+
+        void set_ready(bool b) { m_ready = b; }
+
+    private:
+        std::unique_ptr<tcp::socket> m_sock;
+        bool m_ready;
+    };
+
+    inline std::vector<std::unique_ptr<User>> m_users;
 
     void receive(std::mutex& mtx);
 
