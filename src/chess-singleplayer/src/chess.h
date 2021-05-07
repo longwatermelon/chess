@@ -1,5 +1,5 @@
 #pragma once
-#include <core/include/core.h>
+#include "core.h"
 
 namespace chess
 {

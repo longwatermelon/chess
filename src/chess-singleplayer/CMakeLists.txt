@@ -3,7 +3,7 @@ project(chess-singleplayer)
 add_executable(chess-singleplayer
 	src/main.cpp
 	src/chess.cpp
-	include/chess.h
+	src/chess.h
 )
 
 target_link_libraries(chess-singleplayer PUBLIC core)

@@ -5,10 +5,10 @@ add_library(core
 	src/piece.cpp
 	src/core.cpp
 	src/utils.cpp
-	include/graphics.h
-	include/piece.h
+	src/graphics.h
+	src/piece.h
+	src/utils.h
 	include/core.h
-	include/utils.h
 )
 
 find_library(SDL2_LIB
@@ -57,6 +57,7 @@ target_include_directories(core PUBLIC
 	${SDL2_INCLUDE_DIR}
 	${SDL2_IMAGE_INCLUDE}
 	${SDL2_TTF_INCLUDE}
+	include
 )
 
 target_link_libraries(core PUBLIC

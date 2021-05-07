@@ -1,5 +1,5 @@
-#include "../include/piece.h"
-#include "../include/utils.h"
+#include "piece.h"
+#include "utils.h"
 #include <string>
 #include <iostream>
 

@@ -6,6 +6,6 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(chess)
 
-add_subdirectory(core)
-add_subdirectory(chess-singleplayer)
-add_subdirectory(chess-multiplayer)
+add_subdirectory(src/core)
+add_subdirectory(src/chess-singleplayer)
+add_subdirectory(src/chess-multiplayer)

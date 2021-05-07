@@ -1,4 +1,4 @@
-#include "../include/chess.h"
+#include "chess.h"
 #include <string>
 
 

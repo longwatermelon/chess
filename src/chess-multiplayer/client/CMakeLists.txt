@@ -3,7 +3,7 @@ project(client)
 add_executable(client
 	src/main.cpp
 	src/client.cpp
-	include/client.h
+	src/client.h
 )
 
 target_link_libraries(client PUBLIC core)

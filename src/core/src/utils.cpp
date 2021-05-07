@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "utils.h"
 
 
 core::utils::ScopedMove::ScopedMove(Piece* piece, int gridx, int gridy, SDL_Point orig_point)
