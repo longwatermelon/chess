@@ -11,11 +11,18 @@ add_library(core
 	include/core.h
 )
 
+set(PUBLIC_HEADERS_LIST
+	include/core.h
+)
+
+source_group("Public Headers" FILES ${PUBLIC_HEADERS_LIST})
+
 find_library(SDL2_LIB
   NAMES SDL2.lib
   HINTS ENV{CMAKE_PREFIX_PATH}
   PATH_SUFFIXES SDL2-2.0.14/lib/x64
 )
+
 find_library(SDL2MAIN_LIB
   NAMES SDL2main.lib
   HINTS ENV{CMAKE_PREFIX_PATH}
