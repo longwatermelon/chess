@@ -1,4 +1,5 @@
 #include "server.h"
+#include "core.h"
 #include <mutex>
 
 
@@ -27,14 +28,30 @@ void server::receive(std::mutex& mtx)
                         data += c;
 
                     std::cout << "received: " << data << "\n";
+                    std::string data_type = core::multiplayer::get_elem_from_string(data, "type");
 
                     broadcast(data, m_users[i].get());
+
+                    if (data_type == "disconnect")
+                        handle_disconnect(i);
                 }
             }
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+}
+
+
+void server::handle_disconnect(int index)
+{
+    switch (index)
+    {
+    case 0: std::cout << "white left the game\n"; break;
+    case 1: std::cout << "black left the game\n"; break;
+    }
+
+    m_users.erase(m_users.begin() + index);
 }
 
 

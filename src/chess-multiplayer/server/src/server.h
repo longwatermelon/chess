@@ -19,6 +19,7 @@ namespace server
     inline std::vector<std::unique_ptr<tcp::socket>> m_users;
 
     void receive(std::mutex& mtx);
+    void handle_disconnect(int index);
 
     void send(tcp::socket& sock, const std::string& msg);
 

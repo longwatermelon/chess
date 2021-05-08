@@ -114,12 +114,16 @@ void client::mainloop()
 
     if (thr_recv.joinable()) thr_recv.join();
 
+    send(sock, "type=disconnect");
+
     core::cleanup();
 }
 
 
 void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
 {
+    bool other_user_disconnected = false;
+
     while (running)
     {
         if (sock.available() > 0)
@@ -130,7 +134,13 @@ void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
 
             if (type == "new-move")
                 handle_new_move(data);
+
+            if (type == "disconnect")
+                other_user_disconnected = true;
         }
+
+        if (other_user_disconnected)
+            core::utils::draw_text(core::m_gfx.get(), core::m_font, "opponent disconnected", 370, 50);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

@@ -34,6 +34,9 @@ Piece::Piece(PieceType type, Color color, int x, int y, Graphics* gfx)
 
 void Piece::render(Graphics* gfx, bool flipped)
 {
+    if (!m_texture)
+        return;
+
     SDL_Rect rect;
 
     if (flipped)
