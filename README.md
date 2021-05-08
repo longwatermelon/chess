@@ -16,5 +16,5 @@ asio
 ```
 mkdir build
 cd build
-cmake .. "-Dpath_to_vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake .. "-DCMAKE_TOOLCHAIN_FILE=path_to_vcpkg/scripts/buildsystems/vcpkg.cmake"
 ```
