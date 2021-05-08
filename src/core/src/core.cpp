@@ -6,8 +6,6 @@
 
 void core::init()
 {
-    SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 
     m_gfx = std::make_unique<Graphics>("chess");
@@ -226,6 +224,10 @@ void core::cleanup()
     }
 
     m_gfx.reset();
+
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
 }
 
 

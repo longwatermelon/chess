@@ -4,7 +4,7 @@
 
 Graphics::Graphics(const char* title)
 {
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
 
     m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 1000, SDL_WINDOW_SHOWN);
@@ -18,10 +18,8 @@ Graphics::Graphics(const char* title)
 
 Graphics::~Graphics()
 {
-    SDL_DestroyWindow(m_window);
     SDL_DestroyRenderer(m_rend);
-
-    SDL_Quit();
+    SDL_DestroyWindow(m_window);
 }
 
 
