@@ -15,7 +15,7 @@ set(PUBLIC_HEADERS_LIST
 	include/core.h
 )
 
-source_group("Public Headers" FILES ${PUBLIC_HEADERS_LIST})
+source_group("Public" FILES ${PUBLIC_HEADERS_LIST})
 
 find_library(SDL2_LIB
   NAMES SDL2.lib
