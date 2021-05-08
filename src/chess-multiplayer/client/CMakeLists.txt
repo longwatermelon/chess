@@ -1,6 +1,10 @@
 project(client)
 
-find_package(asio CONFIG REQUIRED)
+if (UNIX)
+	find_package(asio CONFIG REQUIRED COMPONENTS pthread system)
+else()
+	find_package(asio CONFIG REQUIRED)
+endif()
 
 add_executable(client
 	src/main.cpp
