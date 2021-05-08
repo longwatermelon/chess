@@ -11,3 +11,10 @@ sdl2_image
 sdl2_ttf
 
 asio
+
+# building
+```
+mkdir build
+cd build
+cmake .. "-Dpath_to_vcpkg/scripts/buildsystems/vcpkg.cmake"
+```
