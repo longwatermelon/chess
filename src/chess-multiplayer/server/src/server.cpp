@@ -45,13 +45,8 @@ void server::receive(std::mutex& mtx)
 
 void server::handle_disconnect(int index)
 {
-    switch (index)
-    {
-    case 0: std::cout << "white left the game\n"; break;
-    case 1: std::cout << "black left the game\n"; break;
-    }
-
     m_users.erase(m_users.begin() + index);
+    std::cout << "user left the game\n";
 }
 
 
@@ -86,6 +81,7 @@ void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service&
             // m_users[0] is white
             send(*m_users[0].get(), "type=game-start");
             std::cout << "started game\n";
+            full_game = true;
         }
 
         std::unique_ptr<tcp::socket> sock = std::make_unique<tcp::socket>(service);
@@ -98,7 +94,11 @@ void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service&
 
             if (full_game)
             {
-                send(*sock.get(), "type=error&message=already two players in game");
+                if (m_users.size() < 2)
+                    send(*sock.get(), "type=error&message=dead server, create a new server to play again");
+                else
+                    send(*sock.get(), "type=error&message=already two players in game");
+
                 continue;
             }
 
@@ -109,6 +109,8 @@ void server::accept_users(std::mutex& mtx, tcp::acceptor& act, asio::io_service&
 
             if (next_color == "white")
                 next_color = "black";
+            else
+                next_color = "white";
         }
     }
 }

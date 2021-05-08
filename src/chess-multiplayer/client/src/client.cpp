@@ -1,10 +1,19 @@
 #include "client.h"
 #include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 
 void client::mainloop()
 {
     bool running = true;
+
+    if (!check_assets())
+    {
+        std::cout << "error: missing assets folder\n";
+        system("pause");
+        return;
+    }
 
     asio::io_service service;
     tcp::socket sock(service);
@@ -120,10 +129,24 @@ void client::mainloop()
 }
 
 
+bool client::check_assets()
+{
+    bool valid = false;
+    struct stat info;
+
+    if (stat("assets", &info) != 0)
+        std::cout << "cant find assets directory\n";
+    else if (info.st_mode & S_IFDIR)
+        valid = true;
+    else
+        std::cout << "cant find assets directory\n";
+
+    return valid;
+}
+
+
 void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
 {
-    bool other_user_disconnected = false;
-
     while (running)
     {
         if (sock.available() > 0)
@@ -136,11 +159,8 @@ void client::receive(tcp::socket& sock, std::mutex& mtx, bool& running)
                 handle_new_move(data);
 
             if (type == "disconnect")
-                other_user_disconnected = true;
+                running = false;
         }
-
-        if (other_user_disconnected)
-            core::utils::draw_text(core::m_gfx.get(), core::m_font, "opponent disconnected", 370, 50);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

@@ -17,6 +17,7 @@ using namespace asio::ip;
 namespace client
 {
     void mainloop();
+    bool check_assets();
 
     void receive(tcp::socket& sock, std::mutex& mtx, bool& running);
 
