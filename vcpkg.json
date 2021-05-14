@@ -1,0 +1,10 @@
+{
+	"name": "chess",
+	"version": "1.5",
+	"dependencies": [
+		"sdl2",
+		"sdl2-image",
+		"sdl2-ttf",
+		"asio"
+	]
+}
