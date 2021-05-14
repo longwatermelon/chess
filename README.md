@@ -3,9 +3,6 @@ singleplayer and multiplayer chess
 
 assets from [here](https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master)
 
-# install dependencies
-```vcpkg install asio sdl2 sdl2-image sdl2-ttf```
-
 # building
 ```
 mkdir build
